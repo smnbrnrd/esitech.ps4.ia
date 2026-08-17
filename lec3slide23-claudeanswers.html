@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <title>Lecture 3, slide 23 - Claude answers</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Roboto', 'Gill Sans', sans-serif; }
+    </style>
+</head>
+<body> 
+    <main class="container">
+        <h1>Diagnosing Neural Network Training Problems</h1>
+        <p>Common symptoms when training a (deep) neural network, with possible causes and potential solutions.</p>
+        <hr>
+        <h2>1. The training loss is decreasing nicely, but the validation loss is not</h2>
+        <p><strong>Primary diagnosis: overfitting.</strong> The network is memorizing the training data instead of generalizing.</p>
+        <p><strong>Possible causes:</strong></p>
+        <ul>
+        <li>Model too large relative to the amount of data</li>
+        <li>Training for too long</li>
+        <li>Training data not representative</li>
+        <li><em>Distribution shift</em> between train and validation: bad split, temporal leakage, different preprocessing between the two sets (a common bug)</li>
+        </ul>
+        <p><strong>Solutions:</strong></p>
+        <ul>
+        <li>Regularization: weight decay, dropout</li>
+        <li>Early stopping</li>
+        <li>Data augmentation</li>
+        <li>Reduce model capacity</li>
+        <li>Collect more data</li>
+        <li>Check the consistency of the train/validation split and preprocessing</li>
+        </ul>
+        <hr>
+        <h2>2. The training loss is decreasing, but very slowly</h2>
+        <p><strong>Primary diagnosis: learning rate too low.</strong></p>
+        <p><strong>Possible causes:</strong></p>
+        <ul>
+        <li>Learning rate too small</li>
+        <li>Poor weight initialization</li>
+        <li>Unnormalized data (features on very different scales)</li>
+        <li>Network too deep without mechanisms that ease gradient flow</li>
+        <li><em>Vanishing gradients</em> (saturating activations such as sigmoid/tanh in a deep network)</li>
+        </ul>
+        <p><strong>Solutions:</strong></p>
+        <ul>
+        <li>Increase the learning rate (or run a <em>learning rate range test</em>)</li>
+        <li>Normalize the inputs</li>
+        <li>Switch to ReLU/GELU activations</li>
+        <li>Use an adaptive optimizer (Adam)</li>
+        <li>Add batch normalization or residual (skip) connections</li>
+        </ul>
+        <hr>
+        <h2>3. The training loss is oscillating a lot, global trends are unclear (training instability)</h2>
+        <p><strong>Primary diagnosis: learning rate too high</strong> — the optimizer &quot;jumps over&quot; the minima.</p>
+        <p><strong>Possible causes:</strong></p>
+        <ul>
+        <li>Learning rate too large</li>
+        <li>Batch size too small (very noisy gradients)</li>
+        <li>Outliers or poorly cleaned data</li>
+        <li><em>Exploding gradients</em></li>
+        </ul>
+        <p><strong>Solutions:</strong></p>
+        <ul>
+        <li>Reduce the learning rate</li>
+        <li>Add a scheduler (warmup + decay)</li>
+        <li>Increase the batch size</li>
+        <li>Gradient clipping</li>
+        <li>Check for outliers in the data</li>
+        </ul>
+        <p><strong>Teaching note:</strong> a per-batch loss <em>always</em> oscillates somewhat. Look at a moving average or the per-epoch loss before concluding there is genuine instability.</p>
+        <hr>
+        <h2>4. The training loss is not decreasing (the network is not learning)</h2>
+        <p><strong>Primary diagnosis: suspect a bug first</strong>, before blaming hyperparameters.</p>
+        <p><strong>Possible causes (bugs):</strong></p>
+        <ul>
+        <li>Shuffled or misaligned labels</li>
+        <li>Gradients not propagating: frozen layer, stray <code>detach()</code>, missing <code>optimizer.step()</code></li>
+        <li>Loss function unsuited to the task</li>
+        <li>Learning rate set to zero or absurdly small</li>
+        </ul>
+        <p><strong>Possible causes (if the code is correct):</strong></p>
+        <ul>
+        <li>Inappropriate learning rate</li>
+        <li>Degenerate initialization (all weights at zero → symmetry never broken)</li>
+        <li>Dead activations (<em>dying ReLU</em>)</li>
+        <li>Task genuinely impossible (no signal in the features)</li>
+        </ul>
+        <p><strong>Solutions and diagnostic best practices:</strong></p>
+        <ul>
+        <li><strong>Check that you can overfit a tiny subset</strong> (e.g., 10 examples). If the network cannot, it is almost certainly a bug.</li>
+        <li>Compare the initial loss to its theoretical value: e.g., ln(10) ≈ 2.3 for 10 equiprobable classes with cross-entropy. If it starts elsewhere, something is wrong.</li>
+        <li>Review the training loop and the data pipeline line by line.</li>
+        </ul>
+        <hr>
+        <h2>5. The training loss is increasing</h2>
+        <p><strong>The most suspicious case.</strong></p>
+        <p><strong>Possible causes:</strong></p>
+        <ul>
+        <li><strong>Learning rate far too large</strong>: divergence — the loss blows up, sometimes to NaN</li>
+        <li>Sign error: the loss is being <em>maximized</em> by mistake (e.g., wrong convention on the log-likelihood)</li>
+        <li>Gradients applied in the wrong direction</li>
+        <li>Missing <code>optimizer.zero_grad()</code> (gradient accumulation)</li>
+        <li><em>Exploding gradients</em> in recurrent or very deep networks</li>
+        </ul>
+        <p><strong>Solutions:</strong></p>
+        <ul>
+        <li>Drastically reduce the learning rate</li>
+        <li>Check the sign and definition of the loss</li>
+        <li>Gradient clipping</li>
+        <li>Review the training loop line by line</li>
+        <li>If the loss goes to NaN: look for numerical instabilities (log(0), division by zero, NaNs in the data)</li>
+        </ul>
+        <hr>
+        <h2>Summary</h2>
+        <ul>
+        <li>The <strong>learning rate shows up in almost every case</strong>: too small → slow learning; too large → oscillations or divergence. It is the number-one hyperparameter to tune.</li>
+        <li>Recommended debugging approach: <strong>start simple</strong> (small model, small data subset that you should be able to overfit), then scale up progressively.</li>
+        </ul>
+        <table class="table table-bordered mt-3">
+            <thead class="table-light">
+                <tr>
+                    <th scope="col">Symptom</th>
+                    <th scope="col">Most likely cause</th>
+                    <th scope="col">First reflex</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Train ↓ but validation ↛ </td>
+                    <td>Overfitting</td>
+                    <td>Regularization, early stopping, more data</td>
+                </tr>
+                <tr>
+                    <td>Train ↓ very slowly</td>
+                    <td>Learning rate too low</td>
+                    <td>Increase LR, normalize inputs</td>
+                </tr>
+                <tr>
+                    <td>Oscillating loss</td>
+                    <td>Learning rate too high</td>
+                    <td>Reduce LR, increase batch size</td>
+                </tr>
+                <tr>
+                    <td>Flat loss</td>
+                    <td>Bug in the code</td>
+                    <td>Overfit 10 examples, check the initial loss</td>
+                </tr>
+                <tr>
+                    <td>Increasing loss</td>
+                    <td>Huge LR or sign error</td>
+                    <td>Reduce LR, check the loss definition</td>
+                </tr>
+            </tbody>
+        </table>
+                
+    </main>
+
+</body>
+</html>

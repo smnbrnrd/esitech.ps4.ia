@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <title>Introduction to Machine Learning</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Roboto', 'Gill Sans', sans-serif; }
+        .logo { max-height: 5rem; margin-right: 2rem; margin-bottom: 3rem;}
+        .author, .mail { font-size: 1.2rem; }
+        section { margin-bottom: 3rem; }
+        span.desc { color: grey; font-size: 0.9rem; display: block; margin-top: 0.2rem; }
+        a { text-decoration: none; color: #3a7ca5 }
+        a.btn, a.btn.disabled { border-color: #3a7ca5; color: #3a7ca5; }
+        a.btn:hover { background-color: #3a7ca5; color: white; }
+        a.btn.disabled { opacity: 0.5; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body> 
+    <div class="container-lg">
+
+        <header class="mt-5 mb-5">
+            <img src="assets/logo-urn-color.png" alt="Logo Université de Rouen Normandie" class="logo">
+            <img src="assets/logo-esitech.png" alt="Logo ESITECH" class="logo">
+            <h1 class="h1">Machine Learning</h1>
+            <hr>
+            <div class="author">Simon BERNARD</div>
+            <div class="mail"><a href="mailto:simon.bernard@univ-rouen.fr">simon.bernard@univ-rouen.fr</a></div>
+            <hr>
+        </header>
+
+        <main>
+            <section>
+                <h2>Description and materials</h2>
+                <p>The materials below are provided as part of the “Machine Learning” course for fourth-year students in the <em>Physics for Health</em> department at ESITECH school of engineering @ University of Rouen Normandy, France.</p>
+                <p>This course is an introduction to the key techniques that form the core of modern AI methods today. It is not intended to provide the knowledge necessary to master these techniques, but rather to provide the understanding needed to use them effectively, and it also serves as a good starting point for further study. </p>
+                <p>This courses id divided into 6 lectures:</p>
+                <table class="table table-bordered mt-3">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col">Lecture</th>
+                            <th scope="col">Title</th>
+                            <th scope="col">Links</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">1</th>
+                            <td>
+                                Fundamentals of Machine Learning
+                                <span class="desc">Introduction to the core concepts of machine learning (supervised learning, loss and risk minimization, overfitting)</span>
+                            </td>
+                            <td>
+                                <a href="./slides.html?deck=lecture1.md" class="btn btn-outline-primary btn-sm">Slides</a>
+                                <a href="./pdf/lecture1.pdf" class="btn btn-outline-primary btn-sm">PDF</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">2</th>
+                            <td>Linear models
+                                <span class="desc">Introduction to linear regression and classification (Least Squares, Ridge and Lasso regression, Logistic regression)</span>
+                            </td>
+                            <td>
+                                <a href="./slides.html?deck=lecture2.md" class="btn btn-outline-primary btn-sm">Slides</a>
+                                <a href="./pdf/lecture2.pdf" class="btn btn-outline-primary btn-sm">PDF</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">3</th>
+                            <td>Deep neural networks
+                                <span class="desc">Introduction to deep neural networks with an emphasis on the practical aspects of training</span>
+                            </td>
+                            <td>
+                                <a href="./slides.html?deck=lecture3.md" class="btn btn-outline-primary btn-sm">Slides</a>
+                                <a href="./pdf/lecture3.pdf" class="btn btn-outline-primary btn-sm">PDF</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">4</th>
+                            <td>Deep learning for images
+                                <span class="desc">Introduction to deep learning techniques for image analysis and computer vision (Convolutional Neural Networks)</span>
+                            </td>
+                            <td>
+                                <a href="./slides.html?deck=lecture4.md" class="btn btn-outline-primary btn-sm">Slides</a>
+                                <a href="./pdf/lecture4.pdf" class="btn btn-outline-primary btn-sm">PDF</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">5</th>
+                            <td>Deep learning for sequences
+                                <span class="desc">Introduction to deep learning techniques for sequence analysis (Recurrent Neural Networks and Transformers)</span>
+                            </td>
+                            <td>
+                                <a href="./slides.html?deck=lecture5.md" class="btn btn-outline-primary btn-sm disabled">Slides</a>
+                                <a href="./pdf/lecture5.pdf" class="btn btn-outline-primary btn-sm disabled">PDF</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">6</th>
+                            <td>Deep learning for physics
+                                <span class="desc">Introduction to deep learning techniques for physics applications (Physics-Informed Neural Networks, Neural Operators)</span>
+                            </td>
+                            <td>
+                                <a href="./slides.html?deck=lecture6.md" class="btn btn-outline-primary btn-sm">Slides</a>
+                                <a href="./pdf/lecture6.pdf" class="btn btn-outline-primary btn-sm disabled">PDF</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p>Several Jupyter notebooks are available for each lecture to illustrate the concepts and/or to serve as practical exercises:</p>
+                <table class="table table-bordered mt-3">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col">Lecture</th>
+                            <th scope="col">Download link and description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">1</th>
+                            <td><a href="./notebooks/lec1-basics-classification.ipynb">lec1-basics-classification.ipynb</a>
+                            <span class="desc">This notebook is a tutorial that covers the basics of classification in machine learning. Several toy datasets are used to illustrate the fundamental concepts, e.g. data preparation, decision boundaries visualization, underfitting and overfitting, and model evaluation.</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">1</th>
+                            <td><a href="./notebooks/lec1-polynomial-regression.ipynb">lec1-polynomial-regression.ipynb</a>
+                            <span class="desc">This notebook proposes a few exercises on polynomial regression to help you better understand the concepts of parameterized models and overfitting in regression tasks.</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">2</th>
+                            <td><a href="./notebooks/lec2-linear-regression.ipynb">lec2-linear-regression.ipynb</a>
+                            <span class="desc">This notebook illustrates the basics of linear regression with the least squares method. It includes exercices on regularized linear models, hyperparameters tuning and feature scaling.</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">2</th>
+                            <td><a href="./notebooks/lec2-logistic-regression.ipynb">lec2-logistic-regression.ipynb</a>
+                            <span class="desc">This notebook guide you through the implementation from scratch of the gradient descent learning algorithm for logistic regression.</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">3</th>
+                            <td><a href="./notebooks/lec3-perceptron-learning.ipynb">lec3-perceptron-learning.ipynb</a>
+                            <span class="desc">This notebook guide you through the implementation from scratch of the learning procedure for a perceptron.</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">3</th>
+                            <td><a href="./notebooks/lec3-neural-network-keras.ipynb">lec3-neural-network-keras.ipynb</a>
+                            <span class="desc">This notebook is a tutorial on building neural networks using Keras. Each step is illustrated with the Fashion MNIST dataset.</span>
+                            </td>
+                        </tr>
+                    </td>
+                </table>
+            </section>
+            <section>
+                <h2>Other resources</h2>
+                <p>Below is a list of the resources that served as inspiration for these materials and that may be useful for further study.</p>
+                <section>
+                    <h3>Books</h3>
+                    <ul>
+                        <li><a href="https://www.deeplearningbook.org/" target="_blank">Deep Learning</a> by Ian Goodfellow, Yoshua Bengio and Aaron Courville, 2016</li>
+                        <li><a href="https://udlbook.github.io/udlbook/" target="_blank">Understanding Deep Learning</a> by Simon J.D. Prince, last update in 2026</li>
+                        <li><a href="https://www.statlearning.com/" target="_blank">An Introduction to Statistical Learning</a> by Gareth James, Daniela Witten, Trevor Hastie, and Robert Tibshirani</li>
+                        <li><a href="https://d2l.ai/" target="_blank">Dive into Deep Learning</a> by Aston Zhang, Zack C. Lipton, Mu Li and Alex J. Smola</li>
+                    </ul>
+                    <h3>Online courses</h3>
+                    <ul>
+                        <li><a href="https://fidle.cnrs.fr/w3/" target="_blank">FIDLE @ CNRS</a> (slides and youtube videos in french)</li>
+                        <li><a href="https://github.com/glouppe/info8010-deep-learning" target="_blank">INFO8010 - Deep Learning</a> by Gilles Louppe @ University of Liège, Belgium</li>
+                        <li><a href="https://fleuret.org/dlc/">Deep Learning course</a> by François Fleuret @ University of Geneva, Switzerland</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <h2>Notice</h2>
+                <p>The slides for this course were created using <a href="https://remarkjs.com/" target="_blank">remark.js</a> and were largely inspired, in terms of design, by Gilles Louppe's slides, available at <a href="https://github.com/glouppe/info8010-deep-learning" target="_blank">https://github.com/glouppe/info8010-deep-learning</a>.</p>
+            </section>
+
+        </main>
+    </div>
+</body>
+</html>
