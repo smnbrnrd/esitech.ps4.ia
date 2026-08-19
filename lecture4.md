@@ -8,6 +8,12 @@ Simon BERNARD<br>
 [simon.bernard@univ-rouen.fr](mailto:simon.bernard@univ-rouen.fr)<br><br>
 .center.height-4em[![URN logo](assets/logo-urn-color.png)]
 
+
+---
+class: middle, center
+
+# Learning from images
+
 ---
 # Computer Vision
 
@@ -163,6 +169,11 @@ Making a computer able to see and to understand what it sees implies to design m
 - We want **models with visual perception**
 
 .center.width-65.mt-2[![](./medias/lec4/translation_invariance.png)*(source: Prof. Kainz [Deep Learning course](https://wp.doc.ic.ac.uk/bkainz/teaching/70010-deep-learning/) @ Imperial College London)*]
+
+---
+class: middle, center
+
+# Convolutional neural networks
 
 ---
 # Convolutional neural networks
@@ -330,6 +341,11 @@ model.add(Dense(10, activation='softmax'))
 - Padding="same": add zeros around the image to keep the same size
 - Strides=2: skip 1 pixel out of 2
 - Max-pooling of size $2 \times 2$
+
+---
+class: middle, center
+
+# CNN in action
 
 ---
 # CNN in action

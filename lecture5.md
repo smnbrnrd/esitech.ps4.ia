@@ -8,6 +8,13 @@ Simon BERNARD<br>
 [simon.bernard@univ-rouen.fr](mailto:simon.bernard@univ-rouen.fr)<br><br>
 .center.height-4em[![URN logo](assets/logo-urn-color.png)]
 
+
+
+---
+class: middle, center
+
+# Learning from sequences
+
 ---
 # Machine learning with sequences
 
@@ -153,6 +160,11 @@ count: false
 - Implies to model long-range dependencies instead of short-range (local) dependencies
 
 ---
+class: middle, center
+
+# Recurrent neural networks
+
+---
 # Recurrent neuron
 
 .row[
@@ -223,14 +235,14 @@ count: false
 ---
 # Recurrent neural networks
 
-Several problems in practice with such RNN architectures:
+Several problems in practice during training:
 
-- Training with backpropagation through time (BPTT): gradients are propagated through the unfolded network, which can be very deep
+- Backpropagation through time (BPTT): gradients propagated through the unfolded network
 
 .center.width-80[![](./medias/lec5/fidle_recurrent_layer_unfolded_long.png)]
 
 - Can cause **vanishing or exploding gradient problems**
-- **Influence of the first inputs can vanish rapidly**, making it hard to learn long-term dependencies
+- **Influence of the first inputs can vanish rapidly**: hard to learn long-term dependencies
 - Convergence of **training can be very slow**, especially for long sequences
  
 Long story short: **it doesn't work well in practice**
@@ -247,10 +259,10 @@ Long story short: **it doesn't work well in practice**
 .center.width-95[![](./medias/lec5/fidle_lstm_cell_simplified.png)]
 ]
 .col-50.vcenter[
-- $h\_{(t)}$: hidden state vector (output of the cell)
-- $c\_{(t)}$: cell state vector (memory of the cell)
-- $h\_{(t-1)}$ : previous hidden state vector
-- $c\_{(t-1)}$ : previous cell state vector 
+- $\mathbf{h}\_{(t)}$: hidden state vector (output of the cell)
+- $\mathbf{c}\_{(t)}$: cell state vector (memory of the cell)
+- $\mathbf{h}\_{(t-1)}$ : previous hidden state vector
+- $\mathbf{c}\_{(t-1)}$ : previous cell state vector 
 ]
 ]
 
@@ -261,29 +273,34 @@ Long story short: **it doesn't work well in practice**
 
 .center.width-60[![](./medias/lec5/fidle_lstm_cell.png)]
 
-.row[
+.row.small[
 .col-50.vcenter.small[
 $$\begin{aligned}
-f\_{(t)} &= \sigma ( \mathbf{W}\_{hf} \mathbf{y}\_{(t-1)} + \mathbf{W}\_{xf} \mathbf{x}\_{(t)} + b\_f ) \\\\
-i\_{(t)} &= \sigma ( \mathbf{W}\_{hi} \mathbf{y}\_{(t-1)} + \mathbf{W}\_{xi} \mathbf{x}\_{(t)} + b\_i ) \\\\
-g\_{(t)} &= \tanh ( \mathbf{W}\_{hg} \mathbf{y}\_{(t-1)} + \mathbf{W}\_{xg} \mathbf{x}\_{(t)} + b\_g ) \\\\
-o\_{(t)} &= \sigma ( \mathbf{W}\_{ho} \mathbf{y}\_{(t-1)} + \mathbf{W}\_{xo} \mathbf{x}\_{(t)} + b\_o ) \\\\
-c\_{(t)} &= f\_{(t)} \otimes c\_{(t-1)} + i\_{(t)} \otimes g\_{(t)} \\\\
-y\_{(t)} &= o\_{(t)} \otimes \tanh(c\_{(t)})
+\mathbf{f}\_{(t)} &= \sigma ( \mathbf{W}\_{hf} \mathbf{y}\_{(t-1)} + \mathbf{W}\_{xf} \mathbf{x}\_{(t)} + b\_f ) \\\\
+\mathbf{i}\_{(t)} &= \sigma ( \mathbf{W}\_{hi} \mathbf{y}\_{(t-1)} + \mathbf{W}\_{xi} \mathbf{x}\_{(t)} + b\_i ) \\\\
+\mathbf{g}\_{(t)} &= \tanh ( \mathbf{W}\_{hg} \mathbf{y}\_{(t-1)} + \mathbf{W}\_{xg} \mathbf{x}\_{(t)} + b\_g ) \\\\
+\mathbf{o}\_{(t)} &= \sigma ( \mathbf{W}\_{ho} \mathbf{y}\_{(t-1)} + \mathbf{W}\_{xo} \mathbf{x}\_{(t)} + b\_o ) \\\\
+\mathbf{c}\_{(t)} &= \mathbf{f}\_{(t)} \otimes \mathbf{c}\_{(t-1)} + \mathbf{i}\_{(t)} \otimes \mathbf{g}\_{(t)} \\\\
+\mathbf{y}\_{(t)} &= \mathbf{o}\_{(t)} \otimes \tanh(\mathbf{c}\_{(t)})
 \end{aligned}$$
 ]
 .col-10[with
 ]
 .col-40.vcenter.small[
 - $\mathbf{x}\_{(t)} \in \mathbb{R}^d$: input vector
-- $f\_{(t)} \in \mathbb{R}^h$: forget gate's activation vector
-- $i\_{(t)} \in \mathbb{R}^h$: input gate's activation vector
-- $o\_{(t)} \in \mathbb{R}^h$: output gate's activation vector
-- $g\_{(t)} \in \mathbb{R}^h$: current entry vector
-- $c\_{(t)} \in \mathbb{R}^h$: cell state vector
-- $y\_{(t)} \in \mathbb{R}^h$: hidden state / output vector
+- $\mathbf{f}\_{(t)} \in \mathbb{R}^h$: forget gate's activation vector
+- $\mathbf{i}\_{(t)} \in \mathbb{R}^h$: input gate's activation vector
+- $\mathbf{o}\_{(t)} \in \mathbb{R}^h$: output gate's activation vector
+- $\mathbf{g}\_{(t)} \in \mathbb{R}^h$: current entry vector
+- $\mathbf{c}\_{(t)} \in \mathbb{R}^h$: cell state vector
+- $\mathbf{y}\_{(t)} \in \mathbb{R}^h$: hidden state / output vector
 ]
 ]
+
+---
+class: middle, center
+
+# Attention is all you need
 
 ---
 # Seq2seq modeling
@@ -306,7 +323,7 @@ y\_{(t)} &= o\_{(t)} \otimes \tanh(c\_{(t)})
 .center.width-100[![](./medias/lec5/attention_bahdanau.png)*source: [https://distill.pub/2016/augmented-rnns/](https://distill.pub/2016/augmented-rnns/)*]
 
 ---
-# Attention is all you need
+# Bahdanau's attention
 
 - Solution: attention mechanism
 - Transport information from part of the input sequence to part of the output sequence
@@ -315,46 +332,72 @@ y\_{(t)} &= o\_{(t)} \otimes \tanh(c\_{(t)})
 .center.width-70[![](./medias/lec5/bahdanauattentiondiagram.png)*RNN encoder–decoder architecture with the Bahdanau attention mechanism*]
 
 ---
-# Attention is all you need
+# Bahdanau's attention
 
 .center.width-50[![](./medias/lec5/bahdanauattentiondiagram.png)]
 
-- let $h\_{(t)}$ and $s\_{(t)}$ be the encoder and decoder hidden states at time $t$
-- For generating $s\_{(t')}$, a **context vector** $c\_{(t')}$ is computed as :
-$$c\_{(t')} = \sum\_{t=1}^{T} \alpha(s\_{(t'-1)}, h\_{(t)}) h\_{(t)}$$
-where $\alpha(s\_{(t'-1)}, h\_{(t)})$ measures **the importance of $h\_{(t)}$ for generating $s\_{(t')}$**
+- let $\mathbf{h}\_{(t)}$ and $\mathbf{s}\_{(t)}$ be the encoder and decoder hidden states at time $t$
+- For generating $\mathbf{s}\_{(t')}$, a **context vector** $\mathbf{c}\_{(t')}$ is computed as :
+$$\mathbf{c}\_{(t')} = \sum\_{t=1}^{T} \alpha(\mathbf{s}\_{(t'-1)}, \mathbf{h}\_{(t)}) \mathbf{h}\_{(t)}$$
+where $\alpha(\mathbf{s}\_{(t'-1)}, \mathbf{h}\_{(t)})$ measures **the importance of $\mathbf{h}\_{(t)}$ for generating $\mathbf{s}\_{(t')}$**
+
+---
+# Attention as a soft lookup
+
+- Attention is **inspired by information retrieval**
+- Dictionary lookup: find the **key** that matches a **query**, and return the corresponding **value**
+- Attention: the query is compared to every key, the output is a weighted average of all the values s.t. weights measure how well the query matches each key
+
+.center.width-95.mt-2[![](./medias/lec5/qkv_soft_lookup.png)]
+
+---
+# Queries, keys and values
+
+Translating *"The European Economic Area was created in 1992"*:
+
+- The encoder produces one hidden state $\mathbf{h}\_{(t)}$ per source word
+- Three **learned projections** turn hidden states into the three roles of the lookup
+$$\mathbf{q}\_{(t')} = \mathbf{W}\_Q\, \mathbf{s}\_{(t'-1)} \qquad \mathbf{k}\_{(t)} = \mathbf{W}\_K\, \mathbf{h}\_{(t)} \qquad \mathbf{v}\_{(t)} = \mathbf{W}\_V\, \mathbf{h}\_{(t)}$$
+
+.center.width-80[![](./medias/lec5/qkv_translation_roles.png)]
 
 
+---
+# Computing the context vector
+
+.center.width-90[![](./medias/lec5/qkv_context_vector.png)]
+
+- $a$ is typically the scaled dot product between the query and the key .exponent[(1)]
+- $\alpha$ is a softmax over the $a$ values, so that they sum to 1
+- Bahdanau's attention is the special case where the three roles are not projected:
+$$\mathbf{q}\_{(t')} = \mathbf{s}\_{(t'-1)} \qquad \mathbf{k}\_{(t)} = \mathbf{v}\_{(t)} = \mathbf{h}\_{(t)}$$
+
+.footnote[
+  (1) $a(\mathbf{q}\_{(t')}, \mathbf{h}\_{(t)}) = \frac{\mathbf{q}\_{(t')} \cdot \mathbf{k}\_{(t)}}{\sqrt{d\_k}}$ where $d\_k$ is the dimension of the key vectors
+]
+
+---
+# Attention learns the alignment
+
+.width-45[![](./medias/lec5/qkv_alignment_matrix.png)*Alignment matrix with the attention weights (illustrative weights, not the output of an actual trained model)*]
+- Nothing tells the model *which* source word to look at: the alignment **emerges from training**
+- Handles reordering (*European Economic Area* $\rightarrow$ *zone économique européenne*) and one-to-many mappings (*created* $\rightarrow$ *a été créée*)
 
 
+---
+class: middle, center
 
+# Transformers
 
 ---
 # Transformers
 
-.row[
-.col-50[
-- Generic formulation:
-$$\mathbf{y} = \sum\_{i=1}^{m} \text{softmax} \left( a \left( \mathbf{q}, \mathbf{K}\_i \right) \right) \mathbf{V}\_i$$
-- Initially
-  - *query* derived from decoder's current state
-  - *keys*/*values* derived from encoder's states
-  - "derivations" are learned transformations
-- Inspired by information retrieval
-]
-.col-50.center[
-.width-85[![](./medias/lec5/attention_block.png)*source: [Dive into Deep Learning](https://d2l.ai)*]
-]
-]
-
----
-# Transformers
-
-- **Transformers: encoder-decoder architecture based on attention mechanism**
-- Do not use recurrent cells, only attention blocks
+- Encoder-decoder architecture based on attention mechanism
+- **Do not use recurrent cells, only attention blocks**
 - Exploit attention to build high-level representations of sequences
 - E.g. for text, a representation that captures the meaning of the words
-- Similar to CNN, but with attention instead of convolution
+
+.center.width-90.mt-1[![](./medias/lec5/word_meaning_space.png)*2D t-SNE projection of [GloVe 100d](https://nlp.stanford.edu/projects/glove/) representation vectors*]
 
 ---
 # Transformers
@@ -363,65 +406,122 @@ $$\mathbf{y} = \sum\_{i=1}^{m} \text{softmax} \left( a \left( \mathbf{q}, \mathb
 - Called **self-attention**: queries/keys/values all derived from the same sequence
 - This computation .exponent[(1)] is done in several attention "heads" and several layers
 
-.center.width-55.mt-2[![](./medias/lec5/bertviz_printscreen.png)*source: [https://github.com/jessevig/bertviz](https://github.com/jessevig/bertviz)*]
+.center.width-70.mt-2[![](./medias/lec5/bertviz_printscreen.png)*source: [https://github.com/jessevig/bertviz](https://github.com/jessevig/bertviz)*]
 
-.footnote[(1) Not detailed in this course, but based on multiple, parallel operations similar to the previous generic formulation of attention]
+.footnote[(1) Not detailed in this course, but based on multiple parallel operations similar to the previous formulation of attention]
 
 ---
 # Transformers
 
 .row[
-.col-60[
-- Encoder: Bidirectionnal self-attention
-- Decoder: Unidirectionnal self-attention + encoder-decoder attention
-
-.center.width-55.mt-4[![](./medias/lec5/decoder_undirectional_attention.png)*Unidirectional attention (source: [fidle.cnrs.fr](https://fidle.cnrs.fr))*]
-]
 .col-40.center[
-.width-80[![](./medias/lec5/attention_is_all_you_need.png)*source: founder paper "Attention is all you need", 2017, Google DeepMind*]
+.width-90[![](./medias/lec5/attention_is_all_you_need.png)*source: [Vaswani et al. "Attention is all you need", 2017](https://arxiv.org/abs/1706.03762)*]
+]
+.col-60[
+- Encoder (left branch): representation learning part
+- Once trained, it can be used as a **pre-trained representation model** for many downstream tasks (classification, labeling, etc.)
+]
+]
+
+---
+count: false
+# Transformers
+
+.row[
+.col-40.center[
+.width-90[![](./medias/lec5/attention_is_all_you_need.png)*source: [Vaswani et al. "Attention is all you need", 2017](https://arxiv.org/abs/1706.03762)*]
+]
+.col-60[
+- Decoder (right branch): sequence generation part (thanks to unidirectional attention)
+.center.width-60.mt-2[![](./medias/lec5/decoder_undirectional_attention.png)*Unidirectional attention (source: [fidle.cnrs.fr](https://fidle.cnrs.fr))*]
+- It's the core part of **Large Language Models (LLM)** (e.g. the GPT model of ChatGPT)
 ]
 ]
 
 ---
 # Transformers
 
-- **Transformers have been to text processing what CNN have been to image processing**
-- Huge gain in performance and efficiency
-- Many variants and improvements since 2018
-- BERT: an encoder-only, specialized in text understanding (and subsequent tasks)
-- GPT (at the core of ChatGPT): decoder-only and specialized in text generation
-- T5: encoder-decoder, specialized in text-to-text tasks
+.row[
+.col-40.center[
+.width-90[![](./medias/lec5/attention_is_all_you_need.png)*source: [Vaswani et al. "Attention is all you need", 2017](https://arxiv.org/abs/1706.03762)*]
+]
+.col-60[
+Few important tricks to make it work in practice:
+- **Text embeddings**: map discrete symbols to continuous vectors
+- **Positional encoding**: add information about the position of each element
+- **Residual connections and layer normalization**: stabilize training
+- **MLPs**: add non-linearity and increase model capacity
+]
+]
 
 ---
-# Transformers
+# Self supervised training
 
+- Now, the question is "how to train such a model to make it learn the semantics of language?"
+- We have a lot of text available, but we don't have labels for it
+- Solution: **self-supervised training**, i.e. create a supervised task from the text itself
+
+Example:
+
+.width-70[![](./medias/lec5/mlm_pretraining.png)]
+
+---
+count: false
+# Self supervised training
+
+- Now, the question is "how to train such a model to make it learn the semantics of language?"
+- We have a lot of text available, but we don't have labels for it
+- Solution: **self-supervised training**, i.e. create a supervised task from the text itself
+
+Example:
+
+.width-70[![](./medias/lec5/ntp_pretraining.png)]
+
+---
+# Large Language Models
+
+- Transformers have been to text processing what CNN have been to image processing
 - **Large Language Models (LLM) are transformer-based foundations models**
 - Pre-trained on HUGE corpus of text
-- Self-supervised training:
-  - Masked language modeling: predict missing words in a sentence
-  - Next sentence prediction: predict if two sentences follow each other
 - Today: in much more complex systems with enhanced capabilities (RAG, Multi-modal, conversational agents, etc.)
 
-.row.mt-4[
-.col-30.center[
-.width-55[![](./medias/lec5/gemini_logo.png)]
+.row.wrap.evenly.gap-2[
+.height-2em[
+  ![](./medias/lec5/gemini_logo.png)
 ]
-.col-30.center[
-.width-60[![](./medias/lec5/chatgpt_logo.png)]
+.height-2em[
+  ![](./medias/lec5/claude_logo.png)
 ]
-.col-30.center[
-.width-55[![](./medias/lec5/mistral_logo.png)]
+.height-2em[
+  ![](./medias/lec5/copilot_logo.png)
+]
+.height-2em[
+  ![](./medias/lec5/chatgpt_logo.png)
+]
+.height-2em[
+  ![](./medias/lec5/mistral_logo.png)
+]
+.height-2em[
+  ![](./medias/lec5/llama_logo.png)
+]
+.height-2em[
+  ![](./medias/lec5/grok-logo.png)
+]
+.height-2em[
+  ![](./medias/lec5/qwen-logo.png)
+]
+.height-2em[
+  ![](./medias/lec5/deepseek-logo.png)
 ]
 ]
 
-.row.mt-2[
-.col-30.center[
-.width-50[![](./medias/lec5/claude_logo.png)]
-]
-.col-30.center[
-.width-55[![](./medias/lec5/copilot_logo.png)]
-]
-.col-30.center[
-.width-50[![](./medias/lec5/llama_logo.png)]
-]
-]
+---
+# Takeaways
+
+.box[Sequences are variable-length data that can be discrete (text) or continuous (audio, signals).]
+
+.box[Recurrent neural networks (RNN), designed to process sequences, have strong limitations in practice. LSTM and GRU cells are the best of the kind.]
+
+.box[**Attention mechanisms allow models to focus on relevant parts** of the input sequence when generating outputs, enabling efficient sequence-to-sequence modeling.]
+
+.box[**Transformers, based on self-attention, have become the state-of-the-art architecture for sequence modeling**, particularly in natural language processing. They are the foundation of Large Language Models (LLMs) like GPT.]

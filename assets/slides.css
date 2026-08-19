@@ -128,7 +128,6 @@ p + ul, p + ol { margin-top: -0.5em;}
     flex: 0 0 auto;
 }
 
-
 .col-05 { width: 0.5%; } .col-1 { width: 1%; } .col-2 { width: 2%; } .col-3 { width: 3%; } .col-4 { width: 4%; } .col-5 { width: 5%; } .col-6 { width: 6%; } .col-7 { width: 7%; } .col-8 { width: 8%; } .col-9 { width: 9%; }
 .col-10 { width: 10%; } .col-11 { width: 11%; } .col-12 { width: 12%; } .col-13 { width: 13%; } .col-14 { width: 14%; } .col-15 { width: 15%; } .col-16 { width: 16%; } .col-17 { width: 17%; } .col-18 { width: 18%; } .col-19 { width: 19%; }
 .col-20 { width: 20%; } .col-21 { width: 21%; } .col-22 { width: 22%; } .col-23 { width: 23%; } .col-24 { width: 24%; } .col-25 { width: 25%; } .col-26 { width: 26%; } .col-27 { width: 27%; } .col-28 { width: 28%; } .col-29 { width: 29%; }
@@ -141,6 +140,14 @@ p + ul, p + ol { margin-top: -0.5em;}
 .col-90 { width: 90%; } .col-91 { width: 91%; } .col-92 { width: 92%; } .col-93 { width: 93%; } .col-94 { width: 94%; } .col-95 { width: 95%; } .col-96 { width: 96%; } .col-97 { width: 97%; } .col-98 { width: 98%; } .col-99 { width: 99%; }
 .col-100 { width: 100%; }
 
+
+/* for simple flexbox layout, you can use the following classes: */
+.wrap { flex-wrap: wrap; }
+.gap-1 { gap: 0.5em; }
+.gap-2 { gap: 1em; }
+.gap-3 { gap: 1.5em; }
+.evenly { justify-content: space-evenly; }
+.between { justify-content: space-between; }
 
 /* Misc. global styles ---------------------------------------------------------- */
 
