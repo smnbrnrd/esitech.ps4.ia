@@ -308,7 +308,8 @@ blockquote {
 
 img + em,
 video + em,
-iframe + em { 
+iframe + em, 
+.figcaption { 
     display: block;
     text-align: center;
     font-size: 0.6em;

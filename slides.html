@@ -23,8 +23,8 @@
             let url = new URL(window.location.href);
             let sourceUrl = url.searchParams.get('deck');
             if (sourceUrl) return sourceUrl;
-            //return 'slides.md';
-            return 'lecture4.md'; // for PDF export this function must return the md file that correspond to the slide deck we want to export. This is a workaround for the fact that remark.js does not support exporting slides from a URL parameter.
+            return 'slides.md';
+            // return 'lecture6.md'; // for PDF export this function must return the md file that correspond to the slide deck we want to export. This is a workaround for the fact that remark.js does not support exporting slides from a URL parameter.
         }
 
         // Remark configuration (more: https://github.com/gnab/remark/wiki/Configuration)
