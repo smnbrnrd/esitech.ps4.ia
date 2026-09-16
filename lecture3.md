@@ -394,3 +394,5 @@ Let's play: [https://playground.tensorflow.org/](https://playground.tensorflow.o
 .box[Modern optimizers can help improve convergence and stability during training, but **hyperparameter tuning and monitoring of training/validation losses are still essential for successful training of deep neural networks**]
 
 .footnote[(1) cf. "Universal Approximation Theorems" that state that neural networks with a certain structure can, in principle, approximate any continuous function to any desired degree of accuracy]
+
+
