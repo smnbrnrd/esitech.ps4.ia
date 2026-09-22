@@ -40,7 +40,7 @@ class: middle, center
 .row[
 .col-55[
 - **GraphCast** (2023) .exponent[(1)]
-- Training data: 39 years of observations (ECMWF)
+- Training data: 40+ years of observations (ECMWF)
 - Prediction of weather fields up to 10 days ahead
 - 1.2 billion param., 128 TPUv4 chips for training
 
@@ -95,12 +95,12 @@ class: middle, center
 ]
 
 ---
-# AI for Science: Notable recent works
+# Scientific Machine Learning
 
 .row[
 .col-50[
 **Main challenges:**
-- Based on archituctural priors
+- Based on architectural priors
 - Need for a large amount of data
 - No interpretability and trustworthiness
 - Poor generalization to new regimes 
@@ -113,14 +113,40 @@ class: middle, center
 ]
 .col-50[
 **Solution:**
-.center.width-80.mt-2[![](./medias/lec6/sciml.png)*source: S. Mishra, B. Mosley, ETH Zürich, ["AI in the Sciences and Engineering"](https://camlab.ethz.ch/teaching/ai-in-the-sciences-and-engineering-2024.html) (2024)*]
+.center.width-80.mt-2[![](./medias/lec6/sciml.png)*S. Mishra, B. Mosley, ETH Zürich, ["AI in the Sciences and Engineering"](https://camlab.ethz.ch/teaching/ai-in-the-sciences-and-engineering-2024.html) (2024)*]
 ]
 ]
 
 ---
-# Computational Fluid Dynamics as a case study
+# Scientific Machine Learning
+## Three main ways to incorporate scientific constraints
 
-**Partial Differential Equations are building blocks of science**
+.row.evenly.stretch.center.mt-5[
+.col-30.border[
+**Soft constraint**
+
+Add a term to the loss function that penalizes violations of scientific laws (e.g. PDE residuals)
+
+.width-80[![](./medias/lec6/sciml_approach1.png)]
+]
+.col-30.border[
+**Hard constraint**
+
+Change the architecture (e.g. re-parametrizing the output) to ensure compliance with a scientific law
+
+.width-80[![](./medias/lec6/sciml_approach2.png)]
+]
+.col-30.border[
+**Hybrid**
+
+Integrate a model into a scientific process, such that ML is not a surrogate, but a building block
+
+.width-98[![](./medias/lec6/sciml_approach3.png)]
+]
+]
+
+---
+# Computational Fluid Dynamic as a case study
 
 - Partial derivative of $u(x\_1, \ldots, x\_n) : \mathbb{R}^n \to \mathbb{R}$:
 $$
@@ -131,12 +157,28 @@ i.e. the magnitude of variation of $u$ along the $x\_i$ direction
 $$
   F\left(x\_1, \ldots, x\_n, u, \frac{\partial u}{\partial x\_1}, \ldots, \frac{\partial u}{\partial x\_n}, \frac{\partial^2 u}{\partial x\_1^2}, \frac{\partial^2 u}{\partial x\_1 \partial x\_2}, \ldots \right) = 0
 $$
+- **Partial Differential Equations are building blocks of science**
 - Physical (thermodynamics, electromagnetism, fluid dynamics, etc.), chemical (kinetics, reaction-diffusion, etc.) and biological (population dynamics, epidemiology, etc.) systems
 
----
-# Computational Fluid Dynamics as a case study
 
-**Example: Navier-Stokes equations for incompressible flow**
+---
+# Computational Fluid Dynamic as a case study
+
+- Understanding and solving these equations is crucial for many scientific and industrial applications: aerodynamic simulation, weather forecasting, biological modeling, etc.
+- **Numerical solvers are time-consuming, computationally intensive, and sometimes complex**
+
+.row[
+.col-50[
+.center.width-90[![](./medias/lec6/dynamicalsystem_examples.png)*Yuan YIN, soutenance de thèse, Sorbonne Université, 2023*]
+]
+.col-50[
+.center.width-60[![](./medias/lec6/Flow_around_a_wing.gif)]
+.center.width-80[![](./medias/lec6/Cylinder_flow.gif)]
+]
+]
+
+---
+# Example: Navier-Stokes equations for incompressible flow
 $$
     \begin{cases}
         \dfrac{\partial \mathbf{u}}{\partial t} + (\mathbf{u} \cdot \nabla) \mathbf{u} = -\nabla p + \nu \nabla^2 \mathbf{u} + \mathbf{f} & \text{(momentum equation)} \\\\
@@ -145,54 +187,45 @@ $$
 $$
 with $\mathbf{u}$ the velocity field, $p$ the pressure, $\nu$ the kinematic viscosity and $\mathbf{f}$ the external forces
 
-.center.width-60.mt-2[![](./medias/lec6/navier-stokes-initialconditions.gif)*source: [https://zongyi-li.github.io/neural-operator/](https://zongyi-li.github.io/neural-operator/)*]
+.center.width-60.mt-2[![](./medias/lec6/navier-stokes-initialconditions.gif)*[https://zongyi-li.github.io/neural-operator/](https://zongyi-li.github.io/neural-operator/)*]
+
 
 ---
-# Two ways to predict
+class: middle, center
+# Physics-Informed Neural Networks (PINNs)
 
-.row.mt-2[
-.col-50[
-**Simulation**
+---
+# Implicite Neural Representation (or coordinate-base network)
 
-- Start from the governing equations
-- Discretize, then solve numerically
-- $\text{knowledge} \rightarrow \text{prediction}$
-- Trustworthy, interpretable... and **expensive**
-]
-.col-50[
-**Machine learning**
+- 
 
-- Start from observations
-- Fit a model by minimizing an empirical risk
-- $\text{data} \rightarrow \text{prediction}$
-- Fast, flexible... and **physically ignorant**
-]
-]
 
-.center.width-80.mt-3[![](./medias/lec6/twocultures.png)]
+
 
 
 ---
 # Forward and inverse problems
 
-.row[
-.col-50[
+.row.evenly[
+.col-40[
 **Forward problem**: $\mu \longrightarrow y$
 
-Given the physical parameters $\mu$ (materials, geometry, boundary conditions), predict the observations $y$.
+Given the physical parameters $\mu$, predict the observations $y$.
 
 *This is what a simulator does.*
 ]
-.col-50[
+.col-40[
 **Inverse problem**: $y \longrightarrow \mu$
 
-Given the measured observations, recover the physical parameters.
+Given the measured observations $y$, recover the physical parameters $\mu$.
 
 *This is what an experimentalist wants.*
 ]
 ]
 
 .center.width-80.mt-2[![](./medias/lec6/forwardinverse.png)]
+
+
 
 ---
 # What makes physics data special
@@ -737,10 +770,28 @@ The few active terms *are* the equation.
 
 .small[Caveats: needs clean derivative estimates, a well-chosen library, and the true law must lie in its span.]
 
+
+
+
 ---
 class: middle, center
 
 # Perspectives
+
+---
+# AI for Science: The hot topic
+
+- Very active research topic in the AI community since &sim;2020
+- Goal is to design new AI methods dedicated to scientific and engineering problems
+
+.row[
+.col-50[
+.center.width-95[![](./medias/lec6/ai4science_papers.png)*Ben Blaiszik, [https://github.com/blaiszik/ml_publication_charts/](https://github.com/blaiszik/ml_publication_charts/)*]
+]
+.col-50[
+.center.width-80[![](./medias/lec6/ai4science_conf.png)*S. Mishra, B. Mosley, ETH Zürich, ["AI in the Sciences and Engineering"](https://camlab.ethz.ch/teaching/ai-in-the-sciences-and-engineering-2024.html) (2024)*]
+]
+]
 
 ---
 # Foundation models for science

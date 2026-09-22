@@ -168,12 +168,12 @@ class: middle, center
 # Recurrent neuron
 
 .row[
-.col-50.center[
+.col-45.center[
 **Classical neuron**
 
 .width-80[![](./medias/lec5/fidle_neuron.png)]
 ]
-.col-50.center[
+.col-45.center[
 **Recurrent neuron**
 
 .width-80[![](./medias/lec5/fidle_recurrent_neuron.png)]
@@ -201,10 +201,10 @@ class: middle, center
 
 .row[
 .col-30.center[
-.width-60[![](./medias/lec5/fidle_recurrent_layer.png)]
+.width-80[![](./medias/lec5/fidle_recurrent_layer.png)]
 ]
 .col-70.center[
-.width-90[![](./medias/lec5/fidle_recurrent_layer_unfolded.png)]
+.width-80[![](./medias/lec5/fidle_recurrent_layer_unfolded.png)]
 ]
 ]
 
@@ -217,10 +217,10 @@ class: middle, center
 
 .row[
 .col-30.center[
-.width-60[![](./medias/lec5/fidle_recurrent_layer.png)]
+.width-80[![](./medias/lec5/fidle_recurrent_layer.png)]
 ]
 .col-70.center[
-.width-90[![](./medias/lec5/fidle_recurrent_layer_unfolded.png)]
+.width-80[![](./medias/lec5/fidle_recurrent_layer_unfolded.png)]
 ]
 ]
 

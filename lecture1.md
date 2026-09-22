@@ -239,7 +239,7 @@ class: middle, center
 .col-50.center[
 .width-90[![](./medias/lec1/polyregexample.png)]
 ]
-.col-50[
+.col-45[
 Exemple:
 - $\mathcal{H}$ is the set of polynomials of degree $p$
 - $\Theta \subseteq \mathbb{R}^{p+1}$: coefficients of polynomials of degree $p$

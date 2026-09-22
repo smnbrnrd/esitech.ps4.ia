@@ -25,7 +25,7 @@
 
 body {
     font-family: "Roboto", "PT Sans", "Gill Sans", Calibri, Tahoma, sans-serif;
-    font-size: 12pt;
+    font-size: 11pt;
     font-weight: 300;
     line-height: 1.6;
     color: var(--primary-color);
@@ -148,6 +148,7 @@ p + ul, p + ol { margin-top: -0.5em;}
 .gap-3 { gap: 1.5em; }
 .evenly { justify-content: space-evenly; }
 .between { justify-content: space-between; }
+.stretch { align-items: stretch; }
 
 /* Misc. global styles ---------------------------------------------------------- */
 
@@ -169,6 +170,12 @@ a:hover { text-decoration: underline; }
 .exponent { vertical-align: super; font-size: 0.7em; }
 .subscript { vertical-align: sub; font-size: 0.7em; }
 .small { font-size: 0.8em; }
+.transparent { background-color: transparent; }
+.border {
+    border: solid 2px var(--primary-color);
+    border-radius: 5px;
+    padding: 0 0.4em;
+}
 
 blockquote {
     margin-left: 1.5em;
@@ -181,13 +188,14 @@ blockquote {
     display: block; 
     margin: 0 auto;
 }
+
 *[class*='width-'] * {
     box-sizing: border-box;
     width: 100%;
     height: auto;
 }
 
-*[class*='height-'] * {
+*[class*='height-'] > * {
     box-sizing: border-box;
     width: auto;
     height: 100%;
