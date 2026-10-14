@@ -486,33 +486,25 @@ Example:
 - Today: in much more complex systems with enhanced capabilities (RAG, Multi-modal, conversational agents, etc.)
 
 .row.wrap.evenly.gap-2[
-.height-2em[
-  ![](./medias/lec5/gemini_logo.png)
+.center.height-2em[![](./medias/lec5/gemini_logo.png)]
+
+.center.height-2em[![](./medias/lec5/claude_logo.png)]
+
+.center.height-2em[![](./medias/lec5/copilot_logo.png)]
+
+.center.height-2em[![](./medias/lec5/chatgpt_logo.png)]
+
+.center.height-2em[![](./medias/lec5/mistral_logo.png)]
 ]
-.height-2em[
-  ![](./medias/lec5/claude_logo.png)
-]
-.height-2em[
-  ![](./medias/lec5/copilot_logo.png)
-]
-.height-2em[
-  ![](./medias/lec5/chatgpt_logo.png)
-]
-.height-2em[
-  ![](./medias/lec5/mistral_logo.png)
-]
-.height-2em[
-  ![](./medias/lec5/llama_logo.png)
-]
-.height-2em[
-  ![](./medias/lec5/grok-logo.png)
-]
-.height-2em[
-  ![](./medias/lec5/qwen-logo.png)
-]
-.height-2em[
-  ![](./medias/lec5/deepseek-logo.png)
-]
+
+.row.wrap.evenly.gap-2[
+.center.height-2em[![](./medias/lec5/llama_logo.png)]
+
+.center.height-2em[![](./medias/lec5/grok-logo.png)]
+
+.center.height-2em[![](./medias/lec5/qwen-logo.png)]
+
+.center.height-2em[![](./medias/lec5/deepseek-logo.png)]
 ]
 
 ---

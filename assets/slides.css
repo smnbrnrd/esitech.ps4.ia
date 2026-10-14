@@ -184,7 +184,8 @@ blockquote {
     color: var(--secondary-color);
 }
 
-*[class*='width-'] { 
+*[class*='width-'],
+*[class*='height-'] { 
     display: block; 
     margin: 0 auto;
 }

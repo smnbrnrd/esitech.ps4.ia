@@ -201,43 +201,71 @@ class: middle, dark-slide
 ---
 # Convolution
 
-.center.width-80.mt-2[![](./medias/lec4/convolution1.png)]
+.center.width-80.mt-3.mb-4[![](./medias/lec4/convolution1.png)]
+
+$$
+(0 \times 1) + (1 \times 0) + (1 \times 1) + (0 \times 0) + (0 \times 1) + (1 \times 0) + (0 \times 1) + (0 \times 0) + (0 \times 1) = 1
+$$
 
 ---
 count: false
 # Convolution
 
-.center.width-80.mt-2[![](./medias/lec4/convolution2.png)]
+.center.width-80.mt-3.mb-4[![](./medias/lec4/convolution2.png)]
+
+$$
+(1 \times 1) + (1 \times 0) + (1 \times 1) + (0 \times 0) + (1 \times 1) + (1 \times 0) + (0 \times 1) + (0 \times 0) + (1 \times 1) = 4
+$$
 
 ---
 count: false
 # Convolution
 
-.center.width-80.mt-2[![](./medias/lec4/convolution3.png)]
+.center.width-80.mt-3.mb-4[![](./medias/lec4/convolution3.png)]
+
+$$
+(1 \times 1) + (1 \times 0) + (0 \times 1) + (0 \times 0) + (1 \times 1) + (1 \times 0) + (0 \times 1) + (1 \times 0) + (1 \times 1) = 3
+$$
 
 ---
 count: false
 # Convolution
 
-.center.width-80.mt-2[![](./medias/lec4/convolution4.png)]
+.center.width-80.mt-3.mb-4[![](./medias/lec4/convolution4.png)]
+
+$$
+(1 \times 1) + (0 \times 0) + (0 \times 1) + (1 \times 0) + (1 \times 1) + (0 \times 0) + (1 \times 1) + (1 \times 0) + (1 \times 1) = 4
+$$
 
 ---
 count: false
 # Convolution
 
-.center.width-80.mt-2[![](./medias/lec4/convolution5.png)]
+.center.width-80.mt-3.mb-4[![](./medias/lec4/convolution5.png)]
+
+$$
+(0 \times 1) + (1 \times 0) + (1 \times 1) + (0 \times 0) + (0 \times 1) + (1 \times 0) + (0 \times 1) + (0 \times 0) + (0 \times 1) = 1
+$$
 
 ---
 count: false
 # Convolution
 
-.center.width-80.mt-2[![](./medias/lec4/convolution6.png)]
+.center.width-80.mt-3.mb-4[![](./medias/lec4/convolution6.png)]
+
+$$
+(0 \times 1) + (1 \times 0) + (1 \times 1) + (0 \times 0) + (0 \times 1) + (1 \times 0) + (0 \times 1) + (0 \times 0) + (0 \times 1) = 1
+$$
 
 ---
 count: false
 # Convolution
 
-.center.width-80.mt-2[![](./medias/lec4/convolution7.png)]
+.center.width-80.mt-3.mb-4[![](./medias/lec4/convolution7.png)]
+
+$$
+(0 \times 1) + (1 \times 0) + (1 \times 1) + (0 \times 0) + (0 \times 1) + (1 \times 0) + (0 \times 1) + (0 \times 0) + (0 \times 1) = 1
+$$
 
 ---
 # Convolutional layer

@@ -99,7 +99,7 @@ class: middle, center
 
 .row[
 .col-50[
-**Main challenges:**
+**Limitations:**
 - Based on architectural priors
 - Need for a large amount of data
 - No interpretability and trustworthiness
@@ -132,7 +132,7 @@ Add a term to the loss function that penalizes violations of scientific laws (e.
 .col-30.border[
 **Hard constraint**
 
-Change the architecture (e.g. re-parametrizing the output) to ensure compliance with a scientific law
+Adapt the architecture (e.g. re-parametrizing the output) to ensure compliance with a scientific law
 
 .width-80[![](./medias/lec6/sciml_approach2.png)]
 ]
@@ -146,7 +146,8 @@ Integrate a model into a scientific process, such that ML is not a surrogate, bu
 ]
 
 ---
-# Computational Fluid Dynamic as a case study
+# What are the machine learning tasks?
+## Partial Differential Equations are building blocks of science
 
 - Partial derivative of $u(x\_1, \ldots, x\_n) : \mathbb{R}^n \to \mathbb{R}$:
 $$
@@ -157,12 +158,16 @@ i.e. the magnitude of variation of $u$ along the $x\_i$ direction
 $$
   F\left(x\_1, \ldots, x\_n, u, \frac{\partial u}{\partial x\_1}, \ldots, \frac{\partial u}{\partial x\_n}, \frac{\partial^2 u}{\partial x\_1^2}, \frac{\partial^2 u}{\partial x\_1 \partial x\_2}, \ldots \right) = 0
 $$
-- **Partial Differential Equations are building blocks of science**
-- Physical (thermodynamics, electromagnetism, fluid dynamics, etc.), chemical (kinetics, reaction-diffusion, etc.) and biological (population dynamics, epidemiology, etc.) systems
-
+- Exemple: the heat equation
+$$
+  \frac{\partial u}{\partial t} - \alpha \nabla^2 u = 0, \quad u: \mathbb{R}^d \times [0, T] \to \mathbb{R}
+$$
+where $u$ is the temperature field, $\alpha$ is the thermal diffusivity, and $\nabla^2$ is the Laplacian operator
 
 ---
-# Computational Fluid Dynamic as a case study
+count: false
+# What are the machine learning tasks?
+## Partial Differential Equations are building blocks of science
 
 - Understanding and solving these equations is crucial for many scientific and industrial applications: aerodynamic simulation, weather forecasting, biological modeling, etc.
 - **Numerical solvers are time-consuming, computationally intensive, and sometimes complex**
@@ -178,7 +183,27 @@ $$
 ]
 
 ---
+# What are the machine learning tasks?
+
+Generic form of nonlinear PDEs:
+$$
+\begin{cases}
+  \mathcal{N}[u, \mathbf{x}, t; \mu] = 0, &\quad \mathbf{x} \in \Omega \\\\
+  u(\mathbf{x},t) = g(\mathbf{x},t), &\quad \mathbf{x} \in \partial\Omega \text{ (boundary condition)} \\\\
+  u(\mathbf{x},0) = u\_0(\mathbf{x}), &\quad \mathbf{x} \in \Omega \text{ (initial condition)}
+\end{cases}
+$$
+where $u$ is the unknown field, $\mu$ are the PDE parameters, $\mathcal{N}$ is a differential operator
+
+The three main tasks in scientific machine learning are:
+- **Simulation**: solving a PDE for given initial and boundary conditions, i.e. finding $u$ at any $(\mathbf{x}, t)$
+- **Inverse problems**: inferring unknown parameters of a PDE from measurements, i.e. finding $\mu$
+- **Scientific discovery**: finding new scientific laws from data, i.e. finding $\mathcal{N}$
+
+
+---
 # Example: Navier-Stokes equations for incompressible flow
+
 $$
     \begin{cases}
         \dfrac{\partial \mathbf{u}}{\partial t} + (\mathbf{u} \cdot \nabla) \mathbf{u} = -\nabla p + \nu \nabla^2 \mathbf{u} + \mathbf{f} & \text{(momentum equation)} \\\\
@@ -187,278 +212,70 @@ $$
 $$
 with $\mathbf{u}$ the velocity field, $p$ the pressure, $\nu$ the kinematic viscosity and $\mathbf{f}$ the external forces
 
-.center.width-60.mt-2[![](./medias/lec6/navier-stokes-initialconditions.gif)*[https://zongyi-li.github.io/neural-operator/](https://zongyi-li.github.io/neural-operator/)*]
+.center.width-70.mt-2[![](./medias/lec6/navier-stokes-initialconditions.gif)*[https://zongyi-li.github.io/neural-operator/](https://zongyi-li.github.io/neural-operator/)*]
 
 
 ---
 class: middle, center
-# Physics-Informed Neural Networks (PINNs)
+
+# Physics-Informed Neural Network
 
 ---
-# Implicite Neural Representation (or coordinate-base network)
+# Implicit Neural Representation (or Coordinate-based Network)
 
-- 
-
-
-
-
-
----
-# Forward and inverse problems
-
-.row.evenly[
-.col-40[
-**Forward problem**: $\mu \longrightarrow y$
-
-Given the physical parameters $\mu$, predict the observations $y$.
-
-*This is what a simulator does.*
-]
-.col-40[
-**Inverse problem**: $y \longrightarrow \mu$
-
-Given the measured observations $y$, recover the physical parameters $\mu$.
-
-*This is what an experimentalist wants.*
-]
-]
-
-.center.width-80.mt-2[![](./medias/lec6/forwardinverse.png)]
-
-
-
----
-# What makes physics data special
+- So far, a NN was a **predictor**: encode a *rule* extracted from a dataset to map a sample to a label
+- INR: the network maps **coordinates** to the **value of a field** at those coordinates
+$$h\_{\theta}: \mathbf{x} \longmapsto f(\mathbf{x})$$
+- The NN no longer encode a rule learned from many examples, it encodes **one single object**.
 
 .row[
-.col-55[
-- **Expensive and scarce**: beam time, wind tunnel hours, DFT calculations
-- **But unlimited synthetic data**: the simulator is a data generator
-- **Characterized noise**: the instrument is calibrated, the noise model is known
-- **Strong known constraints**: conservation laws, symmetries, dimensional homogeneity, positivity, boundary conditions
-- **Extrapolation is the goal**: we want to predict *new* regimes
-- **Accuracy matters**: a 5% error may simply be unacceptable
+.col-50.center[
+.width-80[![](./medias/lec6/inr_network.png)*The network takes coordinates as input and outputs the value of the field at those coordinates*]
 ]
-.col-45.center[
-.width-90[![](./medias/lec6/physicsdata.png)]
-]
-]
-
-.important.mt-2[A generic machine learning model ignores every single one of these.]
-
----
-# The cost of simulation
-
-.row[
-.col-55[
-- Electronic structure (DFT), 100 atoms: **hours** of CPU per configuration
-- Large-eddy simulation of a full aircraft: **millions** of CPU-hours
-- Kilometre-scale climate model: **months** on a supercomputer
-]
-.col-45.center[
-.width-95[![](./medias/lec6/simulationcost.png)]
-]
-]
-
-Consequences: with a single run costing that much, we cannot afford
-
-- **design optimization**: $10^3$ to $10^6$ evaluations
-- **uncertainty propagation**: Monte-Carlo over the input distribution
-- **real-time use**: control, data assimilation, digital twins
-
----
-# Small data, strong priors
-
-.row[
-.col-50[
-**Generic deep learning**
-
-- $10^6$ samples, no prior
-- The model learns *everything* from the data, including the laws of physics
-]
-.col-50[
-**Machine learning for physics**
-
-- $10^2$–$10^4$ samples, strong prior
-- The model only has to learn what we **don't** already know
-]
-]
-
-.center.width-80.mt-2[![](./medias/lec6/priorhypothesisspace.png)]
-
-- A physical prior restricts the hypothesis space $\mathcal{H}$
-- Recall lecture 1: this reduces the **variance** of the model, at no bias cost *as long as the prior is true*
-
----
-# Roadmap
-
-.box[**Surrogate models** — replace an expensive simulator by a fast, differentiable approximation]
-
-.box[**Physics-informed learning** — put the equations inside the loss function]
-
-.box[**Symmetry as an inductive bias** — put the invariances inside the architecture]
-
-.box[**Inverse problems and discovery** — go from observations back to parameters, and to equations]
-
----
-class: middle, center
-
-# Surrogate models
-
----
-# Learning the simulator
-
-- A simulator is a (very expensive) function
-$$\mathcal{S}: \mu \longmapsto u\_{\mu}$$
-- Run it $N$ times offline, then fit a model $h\_{\mathbf{W}} \approx \mathcal{S}$ on the pairs $(\mu\_i, u\_i)$
-
-.center.width-90.mt-2[![](./medias/lec6/surrogatepipeline.png)]
-
-- Inference in **milliseconds** instead of hours: speed-ups of $10^3$ to $10^6$
-- And the surrogate is **differentiable**: $\partial u / \partial \mu$ comes for free by autodiff
-- Also known as *emulator*, *response surface*, *reduced-order model*
-
----
-# Building the training set
-
-.row[
-.col-58[
-- Here **you** generate the data: the dataset is a *design choice*
-- Fixed budget of $N$ simulations, how to place the $\mu\_i$?
-  - regular grid: hopeless beyond $d \approx 4$
-  - uniform random: clusters and holes
-  - **Latin hypercube**, **Sobol sequences**: low-discrepancy, much better coverage
-- **Active learning**: run the next simulations where the surrogate is the most uncertain
-]
-.col-42.center[
-.width-95[![](./medias/lec6/samplingdesigns.png)]
-]
-]
-
-.important.mt-1[The cost is in the data generation, not in the training.]
-
----
-# Example: a parametric PDE
-
-Steady heat equation on a plate, with a spatially varying conductivity
-$$\nabla \cdot (\kappa(\mathbf{x}) \nabla u) + f(\mathbf{x}) = 0$$
-
-.row.mt-2[
-.col-50[
-**Predicting a few scalars**
-
-- Output: quantities of interest (max temperature, mean flux)
-- $\mu \in \mathbb{R}^{d} \rightarrow y \in \mathbb{R}^{k}$
-- A plain MLP does the job
-]
-.col-50[
-**Predicting a whole field**
-
-- Output: the temperature map on a grid
-- $\mu \rightarrow u \in \mathbb{R}^{H \times W}$
-- Encoder-decoder CNN (lecture 4)
-]
-]
-
-.center.width-70.mt-2[![](./medias/lec6/parametricpde.png)]
-
----
-# What surrogates unlock
-
-.row[
-.col-55[
-- **Design optimization**: gradient-based search over shapes and materials, because the surrogate is differentiable
-- **Uncertainty propagation** and sensitivity analysis: Monte-Carlo becomes affordable
-- **Real-time systems**: digital twins, model predictive control (e.g. plasma shape control in a tokamak)
-- **Multi-scale modelling**: a learned closure (sub-grid, turbulence, chemistry) inside a coarse solver
-]
-.col-45.center[
-.width-95[![](./medias/lec6/surrogateapplications.png)]
+.col-50.center[
+  .width-75[![](./medias/lec6/inr_image.png)]
 ]
 ]
 
 ---
-# The catch: extrapolation
+class: middle, dark-slide
 
-.row[
-.col-55[
-- A surrogate **interpolates** inside the training envelope
-- Outside of it there is no guarantee at all, and the failure is **silent**: the network still outputs a smooth, plausible field
-- Used autoregressively in time, errors **compound** and the rollout diverges
-]
-.col-45.center[
-.width-95[![](./medias/lec6/extrapolation.png)]
-]
-]
-
-.box[Always state the **validity domain**, detect out-of-distribution inputs, and check conservation laws on the outputs.]
-
----
-# From functions to operators
-
-.row[
-.col-55[
-- An MLP or a CNN trained on a fixed grid learns **one discretization**
-- Change the mesh, the resolution or the geometry, and you have to retrain
-- What physics really wants is a map between **function spaces**
-$$\mathcal{G}: u\_{0} \longmapsto u(\cdot, t)$$
-- **Neural operators** learn $\mathcal{G}$ directly, and are discretization-invariant: train at low resolution, evaluate at high resolution
-]
-.col-45.center[
-.width-95[![](./medias/lec6/neuraloperator.png)]
-]
-]
-
-- Two main families: **DeepONet** (branch/trunk decomposition) and **Fourier Neural Operator** (FNO)
+# Notebook [lec6-inr.ipynb](./notebooks/lec6-inr.ipynb)
 
 ---
 count: false
-# From functions to operators
-## Fourier Neural Operator .exponent[(1)]
+# Implicit Neural Representation (or Coordinate-based Network)
 
-- A convolution with a *global* kernel is a pointwise product in Fourier space
-$$v\_{l+1} = \sigma\Big( \mathbf{W} v\_{l} + \mathcal{F}^{-1}\big( R\_{\phi} \cdot \mathcal{F}(v\_{l}) \big) \Big)$$
-- Keep only the low-frequency modes: cheap, smooth, and independent of the grid
+Three consequences, and they are the whole point:
 
-.center.width-85.mt-2[![](./medias/lec6/fno.png)]
+.box[**Continuous** — the field is defined everywhere, not only at the nodes of a grid. Query any $\mathbf{x}$, at any resolution.]
 
-.footnote[(1) Zongyi Li, Nikola Kovachki, Kamyar Azizzadenesheli, Burigede Liu, Kaushik Bhattacharya, Andrew Stuart, Anima Anandkumar, "Fourier Neural Operator for Parametric Partial Differential Equations", ICLR 2021]
+.box[**Compact** — the memory cost is the number of weights, no longer the number of pixels or mesh cells.]
 
----
-class: middle, center
+.box[**Differentiable** — $\partial h\_{\theta} / \partial \mathbf{x}$ is available *exactly*, by automatic differentiation.]
 
-# Physics-informed learning
+.important.mt-3[This last property is the one that changes everything.]
 
 ---
-# Four ways to inject physics
-
-.box[**1. In the data** — augmentation by known symmetries, synthetic data from the simulator, non-dimensionalization (Reynolds, Mach, Péclet...)]
-
-.box[**2. In the loss** — *soft* constraints: PDE residual, conservation penalty, boundary conditions]
-
-.box[**3. In the architecture** — *hard* constraints: equivariance, output parameterization that is divergence-free, positive, or satisfies the boundary conditions by construction]
-
-.box[**4. In the inference** — physically structured priors, constrained optimization, projection onto the feasible set]
-
-.important.mt-2[Soft constraints are flexible but only approximately satisfied. Hard constraints are exact but rigid.]
-
----
-# Physics-Informed Neural Networks (PINNs)
+# From representing a field to solving an equation
 
 .row[
-.col-55[
-- Radical change of point of view: the network **is** the solution
-$$u\_{\theta}: (\mathbf{x}, t) \longmapsto u(\mathbf{x}, t)$$
-- Input: the coordinates. Output: the value of the field
-- One network per problem instance, trained by minimizing the residual of the equation
-- No mesh, and the solution is continuous and differentiable everywhere
+.col-50[
+- $u\_{\theta}(\mathbf{x}, t)$ is differentiable: $\partial\_{t} u\_{\theta}$ and $\partial\_{xx} u\_{\theta}$ are obtained exactly, by autodiff
+- We can **evaluate the residual** $\mathcal{N}[u\_{\theta}]$ at any point of the domain... *without knowing its solution*
+- Core idea: instead of fitting the network to known **values**, fit it to the **equation** itself
 ]
 .col-45.center[
-.width-95[![](./medias/lec6/pinnarchitecture.png)]
+.width-95[![](./medias/lec6/autodiffresidual.png)]
 ]
 ]
 
-- Old idea (Lagaris, 1998), revived in 2019 by Raissi, Perdikaris and Karniadakis .exponent[(1)]
+.important[Supervised learning minimizes a distance to **labels**. A PINN minimizes a distance to an **equation**.]
+
+---
+# Physics-Informed Neural Network (PINN) .exponent[(1)]
+
+.center.width-95[![](./medias/lec6/pinnarchitecture.png)]
 
 .footnote[(1) Maziar Raissi, Paris Perdikaris, George Em Karniadakis, "Physics-informed neural networks: A deep learning framework for solving forward and inverse problems involving nonlinear partial differential equations", Journal of Computational Physics, 2019]
 
@@ -469,80 +286,47 @@ Given a PDE written as $\mathcal{N}[u] = 0$ on a domain $\Omega$, with boundary 
 
 $$\mathcal{L}(\theta) = \lambda\_{r} \mathcal{L}\_{r}(\theta) + \lambda\_{b} \mathcal{L}\_{b}(\theta) + \lambda\_{d} \mathcal{L}\_{d}(\theta)$$
 
-.row.mt-1[
+.row.mt-1.small[
 .col-32[
 **PDE residual**
-$$\mathcal{L}\_{r} = \frac{1}{N\_{r}} \sum\_{i=1}^{N\_{r}} \big| \mathcal{N}[u\_{\theta}(\mathbf{x}\_{i})] \big|^{2}$$
+$$\mathcal{L}\_{r} = \frac{1}{N\_{r}} \sum\_{i=1}^{N\_{r}} \big| \mathcal{N}[u\_{\theta}(\mathbf{x}\_{i}, t\_i)] \big|^{2}$$
 ]
 .col-02[]
 .col-32[
 **Boundary / initial**
-$$\mathcal{L}\_{b} = \frac{1}{N\_{b}} \sum\_{j=1}^{N\_{b}} \big| u\_{\theta}(\mathbf{x}\_{j}) - g\_{j} \big|^{2}$$
+$$\mathcal{L}\_{b} = \frac{1}{N\_{b}} \sum\_{j=1}^{N\_{b}} \big| u\_{\theta}(\mathbf{x}\_{j}, t\_j) - g\_{j} \big|^{2}$$
 ]
 .col-02[]
 .col-32[
 **Measurements**
-$$\mathcal{L}\_{d} = \frac{1}{N\_{d}} \sum\_{k=1}^{N\_{d}} \big| u\_{\theta}(\mathbf{x}\_{k}) - u\_{k} \big|^{2}$$
+$$\mathcal{L}\_{d} = \frac{1}{N\_{d}} \sum\_{k=1}^{N\_{d}} \big| u\_{\theta}(\mathbf{x}\_{k}, t\_k) - u\_{k} \big|^{2}$$
 ]
 ]
 
-.center.width-55.mt-1[![](./medias/lec6/collocationpoints.png)]
-
-- The $\mathbf{x}\_{i}$ are **collocation points**, sampled anywhere in $\Omega$: no mesh, and **no labels needed**
-- The data term is optional: a PDE can be solved with zero measurements
+- The $\mathbf{x}\_{i}$ are **collocation points**, sampled anywhere in $\Omega$ — no mesh, and **no labels needed**
+- The third term is **optional**: a PDE can be solved with zero measurements
 
 ---
-# Autodiff strikes back
+# Example: the Burgers' equation
+
+Given $\nu = 0.01 / \pi$, $x \in [-1, 1]$, $t \in [0, 1]$ and $u: [-1, 1] \times [0, 1] \to \mathbb{R}$:
 
 .row[
-.col-55[
-- The residual needs $\partial\_{t} u\_{\theta}$, $\partial\_{xx} u\_{\theta}$, $\nabla \cdot u\_{\theta}$...
-- These are derivatives of the network **with respect to its inputs**, and automatic differentiation (lecture 3) gives them **exactly**
-- No finite differences, no truncation error, no grid
+.col-40[
+$$
+\begin{cases}
+  \frac{\partial u}{\partial t} + u \frac{\partial u}{\partial x} - \nu \frac{\partial^2 u}{\partial x^2} = 0\\\\
+  u(x,0) = -\sin(\pi x)\\\\
+  u(-1,t) = u(1,t) = 0
+\end{cases}
+$$
+
+.small.mt-5[Ci-contre: INR trained with 
+- $100$ points at $t=0$, $x=-1$ and $x=1$ 
+- $10,000$ collocation points sampled in the domain $[-1, 1] \times [0, 1]$]
 ]
-.col-45.center[
-.width-95[![](./medias/lec6/autodiffresidual.png)]
-]
-]
-
-- Cost: each derivative order is an extra pass through the graph. Second-order derivatives in 3D get expensive
-- This is why the idea only became practical in 2019: the maths were known, the **autodiff frameworks** were not
-
----
-# Example: the damped harmonic oscillator
-
-.row[
-.col-52[
-$$m \ddot{u} + c \dot{u} + k u = 0, \quad u(0) = u\_{0}, \quad \dot{u}(0) = 0$$
-
-- Network: $u\_{\theta}(t)$, one input, one output, a few hidden layers
-- Loss: residual on $N\_{r}$ collocation times $+$ initial conditions
-- Reference: the analytical solution
-]
-.col-48.center[
-.width-95[![](./medias/lec6/pinnoscillator.png)]
-]
-]
-
-- Here the observations cover only the first third of the interval, while the residual is enforced everywhere
-- Without the residual, the network fits its training points and then drifts away
-- With it, the physics carries the solution through the region where there is no data at all
-
----
-count: false
-# Example: the 1D heat equation
-
-.row[
-.col-52[
-$$\frac{\partial u}{\partial t} = \alpha \frac{\partial^{2} u}{\partial x^{2}}, \quad (x,t) \in [0, L] \times [0, T]$$
-$$u(x, 0) = u\_{0}(x), \quad u(0,t) = u(L,t) = 0$$
-
-- Network: $u\_{\theta}(x, t)$, two inputs
-- Exactly the same machinery, one more coordinate
-- Output: the full space-time field, queryable at any $(x,t)$
-]
-.col-48.center[
-.width-95[![](./medias/lec6/pinnheat.png)]
+.col-55.center[
+.center.width-100.mt-2[![](./medias/lec6/pinnburgers.png)]
 ]
 ]
 
@@ -552,226 +336,112 @@ class: middle, dark-slide
 # Notebook [lec6-pinn-oscillator.ipynb](./notebooks/lec6-pinn-oscillator.ipynb)
 
 ---
-# Why PINNs are hard to train
+# What PINNs are good for — and where they stop
 
-- **Loss balancing**: the terms have different magnitudes and different physical units. Badly chosen $\lambda$ and one term dominates. Adaptive weighting schemes exist (gradient-norm based, NTK based)
-- **Spectral bias**: networks fit low frequencies first, so oscillatory solutions converge painfully slowly (Fourier features help)
-- **Stiff and multi-scale problems**: sharp fronts, boundary layers, long time horizons
-- **Causality**: nothing forces the network to learn $t=0$ before $t=T$. Time-marching and domain decomposition are common fixes
+.box[**Inverse problems** — an unknown physical parameter $\mu$ becomes a *trainable variable*, optimized jointly with $\theta$. No outer loop of forward solves.]
 
-.center.width-65.mt-2[![](./medias/lec6/pinnpathologies.png)]
+.box[**Sparse and noisy measurements** — the PDE acts as a physical regularizer and fills the gaps: a full velocity field from a handful of sensors.]
 
-.alert[For a standard forward problem on a well-behaved domain, a classical solver is usually **faster and more accurate**.]
+.box[**Awkward geometries** — nothing to mesh, and the cost does not explode with the dimension of the domain.]
 
----
-# When PINNs actually win
+.alert.mt-3[**But one network solves one problem instance.** Change the initial condition, the boundary conditions or a coefficient, and everything has to be retrained from scratch.]
 
-.box[**Inverse problems**: an unknown physical parameter $\mu$ becomes a *trainable variable*, optimized jointly with the weights $\theta$. No outer loop of forward solves.]
-
-.box[**Sparse and noisy measurements**: the PDE acts as a physical regularizer and fills the gaps, e.g. reconstructing a full velocity field from a handful of sensors.]
-
-.box[**Awkward geometries and high dimensions**: no mesh to generate, and the cost does not explode with the dimension of the domain.]
-
-.box[**When you need a continuous, differentiable solution**, for instance inside a larger differentiable pipeline.]
+.important[A PINN is a **solution**. What we would really like is a **solver**.]
 
 ---
 class: middle, center
 
-# Symmetry as an inductive bias
+# Neural Operators
 
 ---
-# Invariance and equivariance
+# Learning the solution operator
 
 .row[
-.col-52[
-For a transformation $g$ of a group $G$:
-
-- $f$ is **invariant**: $f(g \cdot \mathbf{x}) = f(\mathbf{x})$
-  - the energy of a molecule under a rotation
-- $f$ is **equivariant**: $f(g \cdot \mathbf{x}) = g \cdot f(\mathbf{x})$
-  - the forces on its atoms under the same rotation
+.col-60[
+- PINN = **one** triple $(\mu, g, u\_0)$. 
+- Change the initial condition and it needs to be retrained
+- Solver = **map between functions**
+$$\mathcal{G}: u\_0 \longmapsto u$$
+from the initial condition to the whole solution
+- A **neural operator** learns $\mathcal{G}$ itself, once, from a set of instances already solved by a classical solver
 ]
-.col-48.center[
-.width-95[![](./medias/lec6/equivariance.png)]
+.col-40.center[
+.width-95[![](./medias/lec6/neuraloperator.png)]
 ]
 ]
-
-- Ignoring a symmetry means spending capacity and data to learn something we already know
-- **Data augmentation** gives *approximate* invariance. **Architecture** gives it *exactly*
 
 ---
-# You already know one
+# Why a convolutional network is not enough
 
 .row[
-.col-55[
-- The convolution is **translation-equivariant by construction** (lecture 4): shift the input, the feature maps shift identically
-- Pooling then buys approximate translation invariance
-- That single prior is why CNNs beat MLPs on images with far fewer parameters and far less data
+.col-58[
+- Natural idea: sample $u\_0$ on a $64 \times 64$ grid, feed it to a CNN, output $u$ on the same grid. **It works.**
+- But what has been learned is a map between **vectors of fixed size**, not between functions
+- Change the resolution, the mesh or the geometry, and the model is useless
 ]
-.col-45.center[
-.width-95[![](./medias/lec6/cnnequivariance.png)]
+.col-42.center[
+.width-95[![](./medias/lec6/discretizationtrap.png)]
 ]
 ]
 
-The question to ask for any physical system: **which group acts on my data?**
-
-- translations: images, time series, homogeneous media
-- rotations and reflections: molecules, 3D fields, crystals
-- permutations: sets of identical particles
-- scaling, time reversal, gauge symmetries
+.box[What we want is **discretization invariance**: a model trained at one resolution that can be evaluated at another, because it has learned something about the *functions*, not about the *samples*.]
 
 ---
-# Point clouds and graphs
+# Fourier Neural Operator: the idea .exponent[(1)]
 
 .row[
-.col-55[
-- Many physical systems are **sets of interacting entities**: atoms, particles, mesh nodes, bodies
-- No grid, no fixed ordering, variable size
-- **Graph neural networks**, message passing:
-$$\mathbf{m}\_{ij} = \phi(\mathbf{h}\_{i}, \mathbf{h}\_{j}, \mathbf{x}\_{j} - \mathbf{x}\_{i})$$
-$$\mathbf{h}\_{i}' = \psi\Big(\mathbf{h}\_{i}, \sum\_{j \in \mathcal{N}(i)} \mathbf{m}\_{ij}\Big)$$
-- The sum makes the layer **permutation-equivariant** by construction
+.col-56[
+- For a linear PDE, the solution is a convolution with the Green's function
+$$u(\mathbf{x}) = \int G(\mathbf{x} - \mathbf{x}')\, f(\mathbf{x}')\, d\mathbf{x}'$$
+- So the solution operator is, in essence, a **global convolution**
+- And a global convolution is a **pointwise product in Fourier space**
+- So: go to Fourier, multiply by learned coefficients, come back
 ]
-.col-45.center[
-.width-95[![](./medias/lec6/gnnmessagepassing.png)]
+.col-44.center[
+.width-85[![](./medias/lec6/fnoidea.png)]
 ]
 ]
 
-- Applications: interatomic potentials, jet tagging at the LHC, mesh-based fluid simulation
+.box[Lecture 4: a CNN kernel is **local** ($3 \times 3$) and defined on the grid. A Fourier kernel is **global** and defined on *frequencies* — a property of the function, not of the sampling.]
+
+.footnote[(1) Zongyi Li, Nikola Kovachki, Kamyar Azizzadenesheli, Burigede Liu, Kaushik Bhattacharya, Andrew Stuart, Anima Anandkumar, "Fourier Neural Operator for Parametric Partial Differential Equations", ICLR 2021]
 
 ---
-# E(3)-equivariant networks
+# Fourier Neural Operator: how it works
+
+.center.width-95.mt-2[![](./medias/lec6/fno.png)]
+
+$$v\_{t+1}(\mathbf{x}) = \sigma\Big( \underbrace{\mathbf{W} v\_{t}(\mathbf{x})}\_{\text{local}} + \underbrace{\mathcal{F}^{-1}\big( R\_{\phi} \cdot \mathcal{F}(v\_{t}) \big)(\mathbf{x})}\_{\text{global}} \Big)$$
+
+
+---
+# What it buys you
 
 .row[
-.col-55[
-- Physics in 3D space is invariant under the Euclidean group **E(3)**: translations, rotations, reflections
-- Recipe: use **relative positions** $\mathbf{x}\_{j} - \mathbf{x}\_{i}$ for translation, and features that transform as scalars, vectors and tensors (spherical harmonics) for rotation
-- Machine-learned interatomic potentials: **NequIP**, **MACE**
-]
-.col-45.center[
-.width-95[![](./medias/lec6/e3equivariance.png)]
-]
-]
+.col-48[
+**Discretization invariance**
 
-.box[DFT-level accuracy at molecular-dynamics cost, trained on $10^{2}$–$10^{3}$ configurations instead of $10^{6}$. **Data efficiency is the whole point of equivariance.**]
+Train at $64 \times 64$, evaluate at $256 \times 256$ without retraining — the Fourier modes do not care about the grid
 
----
-# Conservation by construction
+**Speed**
 
-.row[
-.col-55[
-- A network trained to predict $(\mathbf{q}, \mathbf{p}) \rightarrow (\dot{\mathbf{q}}, \dot{\mathbf{p}})$ drifts in energy over long rollouts
-- **Hamiltonian neural networks**: learn the scalar $\mathcal{H}\_{\theta}(\mathbf{q}, \mathbf{p})$ instead, then
-$$\dot{\mathbf{q}} = \frac{\partial \mathcal{H}\_{\theta}}{\partial \mathbf{p}}, \qquad \dot{\mathbf{p}} = -\frac{\partial \mathcal{H}\_{\theta}}{\partial \mathbf{q}}$$
-- Energy conservation is now a property of the **architecture**, not of the training
+Three orders of magnitude faster than the solver, for a *whole family* of instances
 ]
-.col-45.center[
-.width-95[![](./medias/lec6/hamiltoniannn.png)]
+.col-04[]
+.col-48[
+.center.width-100[![](./medias/lec6/fnoresolution.png)]
 ]
 ]
 
-- **Lagrangian neural networks** do the same with $\mathcal{L}(\mathbf{q}, \dot{\mathbf{q}})$, for arbitrary generalized coordinates
-
----
-class: middle, center
-
-# Inverse problems and discovery
-
----
-# The inverse problem
-
-.row[
-.col-55[
-$$\mathbf{y} = \mathcal{A}(\mathbf{x}) + \varepsilon$$
-
-- $\mathcal{A}$ is the (known) forward operator, $\varepsilon$ the noise, $\mathbf{x}$ the unknown
-- **Ill-posed** in the sense of Hadamard: no uniqueness, or no stability. A tiny amount of noise produces a huge error
-- Classical answer, regularization:
-$$\hat{\mathbf{x}} = \arg\min\_{\mathbf{x}} \lVert \mathcal{A}(\mathbf{x}) - \mathbf{y} \rVert^{2} + \lambda R(\mathbf{x})$$
-with $R$ hand-designed (Tikhonov, total variation, sparsity)
+.row.mt-3[
+.col-48[
+.box[**PINN** — learns *a solution*. No data. One instance. Retrain for anything new.]
 ]
-.col-45.center[
-.width-95[![](./medias/lec6/inverseproblem.png)]
+.col-04[]
+.col-48[
+.box[**Neural operator** — learns *a solver*. Needs solved examples. Any instance, instantly.]
 ]
 ]
-
-- Examples: CT and MRI reconstruction, seismic inversion, spectral deconvolution, PSF deconvolution in astronomy
-
----
-# Learned reconstruction
-
-.row[
-.col-55[
-- The idea: **learn the prior** $R$ instead of designing it
-- Naive approach, a CNN mapping $\mathbf{y} \rightarrow \mathbf{x}$ directly: fast, but it throws away the known operator $\mathcal{A}$ and hallucinates
-- **Unrolled optimization**: take $K$ iterations of a classical solver and replace the denoising step by a learned network, then train end-to-end
-- $\mathcal{A}$ stays in the loop, so **data consistency** is enforced
-]
-.col-45.center[
-.width-95[![](./medias/lec6/unrolledoptimization.png)]
-]
-]
-
-.alert[Hallucination is a real danger: a learned prior can invent a structure that is not supported by the measurements. Critical in medical imaging.]
-
----
-# Simulation-based inference
-
-.row[
-.col-55[
-- We can **simulate** $p(\mathbf{y} \mid \mu)$ but not evaluate it: the likelihood is intractable
-- Classical answer (ABC): simulate, reject what does not match. Desperately inefficient
-- **Neural approach**: train a conditional density estimator (normalizing flow) on simulated pairs $(\mu, \mathbf{y})$ to approximate the posterior $p(\mu \mid \mathbf{y})$ directly
-- **Amortized**: train once, then get a posterior for any new observation in milliseconds
-]
-.col-45.center[
-.width-95[![](./medias/lec6/sbi.png)]
-]
-]
-
-- Now standard in particle physics, cosmology, and gravitational-wave parameter estimation
-
----
-# Uncertainty quantification
-
-.row[
-.col-55[
-- **A prediction without an error bar is not a physical result**
-- **Aleatoric** uncertainty: noise in the data, irreducible
-- **Epistemic** uncertainty: the model does not know, reducible with more data
-- Practical tools: deep ensembles, MC dropout, Bayesian last layer, **conformal prediction** (distribution-free coverage guarantee)
-]
-.col-45.center[
-.width-95[![](./medias/lec6/uncertainty.png)]
-]
-]
-
-.box[Epistemic uncertainty is also the signal that tells you when a surrogate is being used **outside its validity domain**.]
-
----
-# Discovering equations
-
-.row[
-.col-55[
-Beyond predicting: recovering an **interpretable law**.
-
-**Symbolic regression**: search the space of mathematical expressions (genetic programming, PySR, AI Feynman)
-
-**SINDy**: build a library of candidate terms
-$$\Theta(\mathbf{X}) = \big[\, \mathbf{1} \;\; \mathbf{x} \;\; \mathbf{x}^{2} \;\; \sin \mathbf{x} \;\; x\_{1}x\_{2} \;\; \dots \big]$$
-then solve a **sparse** regression
-$$\dot{\mathbf{X}} = \Theta(\mathbf{X}) \, \Xi, \qquad \Xi \text{ sparse}$$
-The few active terms *are* the equation.
-]
-.col-45.center[
-.width-95[![](./medias/lec6/sindy.png)]
-]
-]
-
-.small[Caveats: needs clean derivative estimates, a well-chosen library, and the true law must lie in its span.]
-
-
-
 
 ---
 class: middle, center
@@ -830,8 +500,6 @@ class: middle, center
 .box[**Surrogate models** trade accuracy outside the training envelope for a $10^{3}$–$10^{6}$ speed-up, and are differentiable.]
 
 .box[**Physics can be injected in the data, in the loss, or in the architecture.** Soft constraints are flexible, hard constraints are exact.]
-
-.box[**Symmetry is the most profitable prior**: equivariant architectures reach a given accuracy with orders of magnitude less data.]
 
 .box[**Inverse problems are where machine learning brings the most**, because the classical approach requires thousands of forward solves.]
 
