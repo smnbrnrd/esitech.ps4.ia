@@ -9,6 +9,7 @@
 | `burgers.py` | 1D periodic Burgers solver, pseudo-spectral + RK4, 2/3 dealiasing |
 | `fno_train.py` | the 1D FNO, its training at resolution 64 and its evaluation at 32…512 |
 | `f_fnoresolution.py` | the figure "what it buys you", read from the cache written by `fno_train.py` |
+| `f_oscillator.py` | the figure "damped harmonic oscillator" (`../oscillator.png`, notebook `lec6-pinn-oscillator`) — pure numpy, instant |
 
 ## How to run
 

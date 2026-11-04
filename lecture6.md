@@ -223,10 +223,10 @@ class: middle, center
 ---
 # Implicit Neural Representation (or Coordinate-based Network)
 
-- So far, a NN was a **predictor**: encode a *rule* extracted from a dataset to map a sample to a label
+- So far, a NN was a **predictor**: encode *rules* extracted from a dataset to map a sample to a label
 - INR: the network maps **coordinates** to the **value of a field** at those coordinates
-$$h\_{\theta}: \mathbf{x} \longmapsto f(\mathbf{x})$$
-- The NN no longer encode a rule learned from many examples, it encodes **one single object**.
+$$h\_{\theta}: (\mathbf{x},t) \longmapsto u(\mathbf{x},t)$$
+- The NN no longer encode rules learned from many examples, it encodes **one single object**.
 
 .row[
 .col-50.center[
@@ -255,22 +255,6 @@ Three consequences, and they are the whole point:
 .box[**Differentiable** — $\partial h\_{\theta} / \partial \mathbf{x}$ is available *exactly*, by automatic differentiation.]
 
 .important.mt-3[This last property is the one that changes everything.]
-
----
-# From representing a field to solving an equation
-
-.row[
-.col-50[
-- $u\_{\theta}(\mathbf{x}, t)$ is differentiable: $\partial\_{t} u\_{\theta}$ and $\partial\_{xx} u\_{\theta}$ are obtained exactly, by autodiff
-- We can **evaluate the residual** $\mathcal{N}[u\_{\theta}]$ at any point of the domain... *without knowing its solution*
-- Core idea: instead of fitting the network to known **values**, fit it to the **equation** itself
-]
-.col-45.center[
-.width-95[![](./medias/lec6/autodiffresidual.png)]
-]
-]
-
-.important[Supervised learning minimizes a distance to **labels**. A PINN minimizes a distance to an **equation**.]
 
 ---
 # Physics-Informed Neural Network (PINN) .exponent[(1)]
@@ -321,7 +305,7 @@ $$
 \end{cases}
 $$
 
-.small.mt-5[Ci-contre: INR trained with 
+.small.mt-5[Right: INR trained with 
 - $100$ points at $t=0$, $x=-1$ and $x=1$ 
 - $10,000$ collocation points sampled in the domain $[-1, 1] \times [0, 1]$]
 ]
@@ -329,6 +313,22 @@ $$
 .center.width-100.mt-2[![](./medias/lec6/pinnburgers.png)]
 ]
 ]
+
+---
+# PINN in practice
+
+Several practical issues arise when training a PINN:
+- **Hard to train**<br>
+The "data" and "physics" terms are difficult to balance during training, leading to convergence issues
+- **Poor performance for large temporal and spatial scales**<br>
+Usually fail to capture long-term temporal dynamics and large spatial domain needs very deep networks and a huge amount of collocation points
+- **High computational cost**<br>
+Training PINNs can be computationally expensive, especially for large-scale problems
+- **Fail to capture multi-scale dynamics**<br>
+Many spatio-temporal phenomena exhibit behavior across multiple scales, which is challenging for PINNs to capture accurately
+- **Limited generalization ability**<br>
+Models may not generalize well to unseen regions or different parameter values
+
 
 ---
 class: middle, dark-slide
@@ -387,6 +387,19 @@ from the initial condition to the whole solution
 .box[What we want is **discretization invariance**: a model trained at one resolution that can be evaluated at another, because it has learned something about the *functions*, not about the *samples*.]
 
 ---
+# Learning in function space
+
+- A neural operator maps a **function** to a **function** 
+$$\mathcal{G}: a \in \mathcal{A} \longrightarrow u \in \mathcal{U}$$
+ where $\mathcal{A}$ and $\mathcal{U}$ are **infinite-dimensional** spaces of functions over the domain.
+- NN layers have finite numbers of neurons, and the update rule is a sum over neurons:
+$$v\_{t+1, i} = \sigma\Big( \sum\_{j=1}^{n} W\_{ij}\, v\_{t,j} + b\_i \Big)$$
+- We need layers that operates on **functions**, not on **vectors**. The sum becomes an integral over the domain:
+$$v\_{t+1}(\mathbf{x}) = \sigma\Big( \mathbf{W} v\_{t}(\mathbf{x}) + \int\_{\Omega} \kappa(\mathbf{x}, \mathbf{y})\, v\_{t}(\mathbf{y})\, d\mathbf{y} \Big)$$
+- Nothing in this formula mentions a grid: the architecture is defined on the *functions*, and any discretization is just a way to evaluate the integral
+- The challenge: **how do we compute that integral cheaply?**
+
+---
 # Fourier Neural Operator: the idea .exponent[(1)]
 
 .row[
@@ -415,92 +428,105 @@ $$v\_{t+1}(\mathbf{x}) = \sigma\Big( \underbrace{\mathbf{W} v\_{t}(\mathbf{x})}\
 
 
 ---
-# What it buys you
+# 50 shades of Neural Operators
 
-.row[
+FNO is just one example of a neural operator where the integral is computed in Fourier space. Other approaches exist, e.g.:
+
+.center.width-90[![](./medias/lec6/dl4cfd_jungle.png)*[Wang et al. ,"Recent Advances on Machine Learning for Computational Fluid Dynamics: A Survey", 2025](https://arxiv.org/pdf/2408.12171)*]
+
+---
+# 50 shades of Neural Operators
+
+NO can be used for different types of tasks since $a \in \mathcal{A}$, $u \in \mathcal{U}$ can be different types of functions, e.g.:
+
+- An initial condition and a solution for a time dependent PDE
+
+.center.width-50[![](./medias/lec6/navier-stokes-fno.gif)]
+
+- A parameter function and a solution for a time independent PDE
+
+.center.width-60[![](./medias/lec6/fno_darcy_pred.png)]
+
+- A solution at a coarse resolution and a solution at a fine resolution (super-resolution)
+
+---
+# Neural Operators vs traditional solvers
+
+Where NOs win:
+- **Low-to-moderate accuracy requirements**: outperforms solvers with massive speedups of $10^3$ to $10^5$ times faster.
+- **Many-query scenarios** : engineering tasks requiring thousands of simulations, such as structural optimization, climate forecasting, or real-time digital twins
+- **Resolution Invariance (Zero-Shot Super-Resolution)**: a model trained on a coarse grid can be evaluated on a finer grid without retraining, which is not possible with traditional solvers.
+
+Where solvers win:
+- **High-Precision/Safety Critical**: solvers can achieve machine precision, while NOs are limited to a few digits of accuracy.
+- **Error Accumulation**: solvers can control and minimize error accumulation over time, while NOs may suffer from error propagation.
+- **Out-of-Distribution Failures**: solvers are robust to changes in problem parameters, while NOs may fail when tested on scenarios outside their training distribution.
+
+
+
+
+---
+# What else in ML for Physics?
+## The other two ways to incorporate scientific constraints
+
+1. **Soft constraint** : The equation in the loss, this is the PINN we have just seen.
+
+2. Example of **Hard constraint** : 
+  - **Hamiltonian Neural Networks** ([Greydanus et al., 2019](https://arxiv.org/pdf/1906.01563)) and **Lagrangian Neural Networks** ([Cranmer et al., 2020](https://arxiv.org/pdf/2003.04630)) learn the *Hamiltonian* (potential energy plus kinetic energy) or *Lagrangian* (kinetic energy minus potential energy) instead of the dynamics itself, and then use classical mechanics to compute the dynamics → the network is guaranteed to conserve energy
+
+3. Example of **Hybrid** : 
+  - **Neural Ordinary Differential Equations** ([Chen et al., 2018](https://proceedings.neurips.cc/paper_files/paper/2018/file/69386f6bb1dfed68692a24c8686939b9-Paper.pdf)): 
+  $\frac{d\mathbf{z}}{dt} = NN(\mathbf{z}, t, \theta)$ is a neural network and the solution is computed by a classical ODE solver
+  - **Hamiltonian Neural Networks** and **Lagrangian Neural Networks** also belong to this category
+  - **ML-accelerated solvers**, e.g. with learned preconditionners ([Lan et al. 2024](https://arxiv.org/pdf/2310.00177))
+---
+count: false
+# What else in ML for Physics?
+## The other two scientific tasks
+
+Recall the three tasks: finding $u$, finding $\mu$, finding $\mathcal{N}$. We only developed the first one.
+
+.row.mt-2[
 .col-48[
-**Discretization invariance**
+**Inverse problems — finding $\mu$**
 
-Train at $64 \times 64$, evaluate at $256 \times 256$ without retraining — the Fourier modes do not care about the grid
-
-**Speed**
-
-Three orders of magnitude faster than the solver, for a *whole family* of instances
+- **Trainable-parameter trick**: the unknown parameter $\mu$ is a trainable variable, optimized jointly with the network weights $\theta$ — PINN, learned preconditioner
+- **Neural operator**: the unknown parameter $\mu$ is a function, and the neural operator learns the map from $\mu$ to $u$ — FNO, DeepONet
 ]
 .col-04[]
 .col-48[
-.center.width-100[![](./medias/lec6/fnoresolution.png)]
+**Discovery — finding $\mathcal{N}$**
+
+- **Symbolic regression**: the unknown operator $\mathcal{N}$ is a symbolic expression, and the network learns to predict the coefficients of a library of candidate terms — PDE-FIND, SINDy
+- **Neural operator**: the unknown operator $\mathcal{N}$ is a function, and the neural operator learns the map from $u$ to $\mathcal{N}[u]$ — DeepONet, FNO
 ]
 ]
 
-.row.mt-3[
-.col-48[
-.box[**PINN** — learns *a solution*. No data. One instance. Retrain for anything new.]
-]
-.col-04[]
-.col-48[
-.box[**Neural operator** — learns *a solver*. Needs solved examples. Any instance, instantly.]
-]
-]
+But there exists many other ways to solve inverse problems and discover new laws, e.g. by combining neural networks with classical solvers, or by using reinforcement learning.
 
 ---
-class: middle, center
+count: false
+# What else in ML for Physics?
+## And the questions that are still open
 
-# Perspectives
+.box[**Uncertainty quantification** — everything we have built returns a single number. A prediction without an error bar is not a physical result.]
 
----
-# AI for Science: The hot topic
+.box[**Generalization** — these models interpolate inside their training envelope. Extrapolating to a new regime is exactly what physics asks for, and what they do worst.]
 
-- Very active research topic in the AI community since &sim;2020
-- Goal is to design new AI methods dedicated to scientific and engineering problems
+.box[**Geometry** — the FFT of an FNO needs a regular grid. Real engineering lives on unstructured meshes, which is where graph-based operators come in.]
 
-.row[
-.col-50[
-.center.width-95[![](./medias/lec6/ai4science_papers.png)*Ben Blaiszik, [https://github.com/blaiszik/ml_publication_charts/](https://github.com/blaiszik/ml_publication_charts/)*]
-]
-.col-50[
-.center.width-80[![](./medias/lec6/ai4science_conf.png)*S. Mishra, B. Mosley, ETH Zürich, ["AI in the Sciences and Engineering"](https://camlab.ethz.ch/teaching/ai-in-the-sciences-and-engineering-2024.html) (2024)*]
-]
-]
-
----
-# Foundation models for science
-
-.row[
-.col-55[
-- **AlphaFold 2/3**: protein structure prediction, a 50-year-old problem essentially solved at CASP14
-- **GraphCast**, **Pangu-Weather**, **Aurora**: medium-range weather forecasting, more accurate than the operational physical model, in seconds on one GPU instead of hours on a supercomputer
-- **GNoME**, **MatterGen**: materials discovery at the scale of millions of candidate crystals
-]
-.col-45.center[
-.width-95[![](./medias/lec6/foundationmodels.png)]
-]
-]
-
-- Same recipe every time: a huge corpus (often *simulated*), strong architectural priors, one model reused across many downstream tasks
-- Exactly the pretraining paradigm of lecture 5, applied to science
-
----
-# Pitfalls and good practice
-
-- **Data leakage**: splitting at random over samples coming from the same run gives absurdly optimistic scores. Split by **configuration**, by **experiment**, or by **time**
-- **Validate on physics, not only on the MSE**: conservation of energy and mass, symmetries, asymptotic regimes, dimensional consistency
-- **State the validity domain** of the model, and detect inputs that fall outside it
-- **Report uncertainty**, always
-- **Compare to honest baselines**: a linear model, a spline interpolation, or the classical solver *at equal computational budget*
-- **Reproducibility**: version the data-generation scripts, not just the model weights
-
-.center.width-60.mt-2[![](./medias/lec6/goodpractice.png)]
+.box[**Data** — a neural operator needs a classical solver to produce its training set. Who pays for it, and on which benchmark do we compare?]
 
 ---
 # Takeaways
 
-.box[**Physics is not a generic ML problem**: little data, known laws, strong symmetries, and extrapolation as the actual goal.]
+.box[**Scientific machine learning is not generic machine learning.** The goal is not only to score well on a test set, but to stay consistent with known laws and to hold up in regimes never observed.]
 
-.box[**Surrogate models** trade accuracy outside the training envelope for a $10^{3}$–$10^{6}$ speed-up, and are differentiable.]
+.box[Scientific knowledge can be injected **in the loss**, **in the architecture**, or **in the solver**. This lecture developed the first route; the other two are just as active.]
 
-.box[**Physics can be injected in the data, in the loss, or in the architecture.** Soft constraints are flexible, hard constraints are exact.]
+.box[**A PINN is a solution.** The network *is* the field, training *is* solving, and the residual needs no labels at all — only derivatives with respect to the inputs. But one network solves one problem instance.]
 
-.box[**Inverse problems are where machine learning brings the most**, because the classical approach requires thousands of forward solves.]
+.box[**A neural operator is a solver.** It maps a function to a function: the sum over neurons becomes an integral over the domain, and that is exactly what frees it from any grid.]
 
-.box[**No error bar, no physics.** Always quantify uncertainty and state the validity domain.]
+.box[**Neither replaces the classical solver.** On a plain forward problem a solver is still faster and more accurate, and a neural operator needs one to generate its training data. They win where the classical route is structurally expensive: inverse problems, sparse measurements, whole families of instances.]
+
