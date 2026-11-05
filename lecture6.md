@@ -185,7 +185,7 @@ count: false
 ---
 # What are the machine learning tasks?
 
-Generic form of nonlinear PDEs:
+Generic form of PDEs:
 $$
 \begin{cases}
   \mathcal{N}[u, \mathbf{x}, t; \mu] = 0, &\quad \mathbf{x} \in \Omega \\\\
@@ -480,7 +480,6 @@ Where solvers win:
   - **Hamiltonian Neural Networks** and **Lagrangian Neural Networks** also belong to this category
   - **ML-accelerated solvers**, e.g. with learned preconditionners ([Lan et al. 2024](https://arxiv.org/pdf/2310.00177))
 ---
-count: false
 # What else in ML for Physics?
 ## The other two scientific tasks
 
@@ -491,7 +490,7 @@ Recall the three tasks: finding $u$, finding $\mu$, finding $\mathcal{N}$. We on
 **Inverse problems — finding $\mu$**
 
 - **Trainable-parameter trick**: the unknown parameter $\mu$ is a trainable variable, optimized jointly with the network weights $\theta$ — PINN, learned preconditioner
-- **Neural operator**: the unknown parameter $\mu$ is a function, and the neural operator learns the map from $\mu$ to $u$ — FNO, DeepONet
+- **Neural operator**: the unknown parameter $\mu$ is a function, and the neural operator learns the map from $u$ to $\mu$ — FNO, DeepONet
 ]
 .col-04[]
 .col-48[
@@ -505,7 +504,6 @@ Recall the three tasks: finding $u$, finding $\mu$, finding $\mathcal{N}$. We on
 But there exists many other ways to solve inverse problems and discover new laws, e.g. by combining neural networks with classical solvers, or by using reinforcement learning.
 
 ---
-count: false
 # What else in ML for Physics?
 ## And the questions that are still open
 
